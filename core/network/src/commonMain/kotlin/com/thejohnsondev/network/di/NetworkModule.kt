@@ -1,6 +1,6 @@
 package com.thejohnsondev.network.di
 
-import com.thejohnsondev.common.NoInternetConnectionException
+import com.thejohnsondev.common.NoInternetConnectionError
 import com.thejohnsondev.common.Platform
 import com.thejohnsondev.common.getPlatform
 import com.thejohnsondev.network.HttpClientProvider
@@ -39,7 +39,7 @@ val networkModule = module {
                 return@intercept execute(request)
             }
             val isInternetConnected = Konnection.instance.isConnected()
-            if (!isInternetConnected) throw NoInternetConnectionException()
+            if (!isInternetConnected) throw NoInternetConnectionError()
             execute(request)
         }
         client
