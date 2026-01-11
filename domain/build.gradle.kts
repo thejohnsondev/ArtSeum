@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    id("com.android.kotlin.multiplatform.library")
+    alias(libs.plugins.androidLibrary)
 }
 
 kotlin {
-    androidLibrary {
+    androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
