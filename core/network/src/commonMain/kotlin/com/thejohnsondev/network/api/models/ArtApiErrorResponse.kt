@@ -1,4 +1,4 @@
-package com.thejohnsondev.network.api
+package com.thejohnsondev.network.api.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

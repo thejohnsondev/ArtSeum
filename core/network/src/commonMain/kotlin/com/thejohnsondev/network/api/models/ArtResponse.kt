@@ -1,10 +1,10 @@
-package com.thejohnsondev.network.api
+package com.thejohnsondev.network.api.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ArtResponseDto(
+data class ArtResponse(
     @SerialName("data")
     val data: ArtworkData,
     @SerialName("info")
@@ -98,7 +98,7 @@ data class ArtworkData(
     @SerialName("colorfulness")
     val colorfulness: Double,
     @SerialName("color")
-    val color: String? = null, // Type uncertain from null, assuming String or Object
+    val color: ColorInfo? = null,
     @SerialName("latitude")
     val latitude: Double? = null,
     @SerialName("longitude")
@@ -271,4 +271,13 @@ data class Config(
     val iiifUrl: String,
     @SerialName("website_url")
     val websiteUrl: String
+)
+
+@Serializable
+data class ColorInfo(
+    @SerialName("h") val h: Int,
+    @SerialName("l") val l: Int,
+    @SerialName("s") val s: Int,
+    @SerialName("percentage") val percentage: Double,
+    @SerialName("population") val population: Int
 )
