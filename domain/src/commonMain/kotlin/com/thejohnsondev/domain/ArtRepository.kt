@@ -1,5 +1,6 @@
 package com.thejohnsondev.domain
 
+import com.thejohnsondev.domain.model.Artwork
 import kotlinx.coroutines.flow.Flow
 
 interface ArtRepository {

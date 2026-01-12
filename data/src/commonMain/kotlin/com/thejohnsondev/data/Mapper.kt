@@ -1,7 +1,7 @@
 package com.thejohnsondev.data
 
-import com.thejohnsondev.domain.Artwork
-import com.thejohnsondev.domain.ArtworkThumbnail
+import com.thejohnsondev.domain.model.Artwork
+import com.thejohnsondev.domain.model.ArtworkThumbnail
 import com.thejohnsondev.network.api.models.ArtworkData
 import com.thejohnsondev.network.api.models.Thumbnail
 

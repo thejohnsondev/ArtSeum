@@ -1,6 +1,6 @@
 package com.thejohnsondev.data
 
-import com.thejohnsondev.domain.Artwork
+import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.ArtRepository
 import com.thejohnsondev.network.api.ArtApiService
 import kotlinx.coroutines.flow.Flow

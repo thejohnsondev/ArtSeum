@@ -1,4 +1,4 @@
-package com.thejohnsondev.domain
+package com.thejohnsondev.domain.model
 
 data class Artwork(
     val id: Int,
