@@ -26,7 +26,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(projects.domain)
+            api(projects.core.network)
 
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 }

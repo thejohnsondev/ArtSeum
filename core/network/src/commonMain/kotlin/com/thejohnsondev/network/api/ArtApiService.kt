@@ -3,7 +3,7 @@ package com.thejohnsondev.network.api
 import com.thejohnsondev.network.api.models.ArtResponse
 import com.thejohnsondev.network.api.models.ArtworkListResponse
 
-interface ArtApi {
+interface ArtApiService {
     suspend fun fetchArtworks(
         page: Int,
         limit: Int,

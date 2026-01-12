@@ -6,9 +6,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.http.path
 
-class ArtApiImpl(
+class ArtApiServiceImpl(
     private val client: HttpClient
-): ArtApi {
+): ArtApiService {
 
     override suspend fun fetchArtworks(
         page: Int,
