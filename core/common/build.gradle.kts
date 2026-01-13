@@ -26,7 +26,13 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.lifecycle.viewmodel)
 
+            // DateTime
+            implementation(libs.kotlinx.datetime)
+
+            // Serialization
+            implementation(libs.kotlinx.serialization)
         }
     }
 }
