@@ -19,8 +19,18 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            // Splashscreen
+            implementation(libs.androidx.core.splashscreen)
         }
         commonMain.dependencies {
+            api(projects.core.common)
+            api(projects.core.network)
+            api(projects.core.ui)
+            api(projects.data)
+            api(projects.domain)
+            api(projects.presentation)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
