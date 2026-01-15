@@ -1,0 +1,61 @@
+package com.thejohonsondev.ui.designsystem
+
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+val SizeDefault = 0.dp
+val SizeThinBorder = 0.5.dp
+val SizeBorder = 1.dp
+val Size3 = 3.dp
+val Size2 = 2.dp
+val Size4 = 4.dp
+val Size6 = 6.dp
+val Size8 = 8.dp
+val Size10 = 10.dp
+val Size12 = 12.dp
+val Size16 = 16.dp
+val Size20 = 20.dp
+val Size22 = 22.dp
+val Size24 = 24.dp
+val Size28 = 28.dp
+val Size32 = 32.dp
+val Size36 = 36.dp
+val Size40 = 40.dp
+val Size42 = 42.dp
+val Size44 = 44.dp
+val Size48 = 48.dp
+val Size52 = 52.dp
+val Size56 = 56.dp
+val Size64 = 64.dp
+val Size72 = 72.dp
+val Size80 = 80.dp
+val Size86 = 86.dp
+val Size96 = 96.dp
+val Size117 = 117.dp
+val Size128 = 128.dp
+val Size132 = 132.dp
+val Size144 = 144.dp
+val Size156 = 156.dp
+val Size200 = 200.dp
+val Size196 = 196.dp
+val Size280 = 280.dp
+
+val Text11 = 11.sp
+val Text13 = 13.sp
+val Text14 = 14.sp
+val Text17 = 17.sp
+val Text18 = 18.sp
+val Text20 = 20.sp
+val Text22 = 22.sp
+
+const val Percent10 = 0.1f
+const val Percent30 = 0.3f
+const val Percent40 = 0.4f
+const val Percent50 = 0.5f
+const val Percent50i = 50
+const val Percent70 = 0.7f
+const val Percent80 = 0.8f
+const val Percent90 = 0.9f
+const val Percent95 = 0.95f
+const val Percent99 = 0.99f
+const val Percent100 = 1f

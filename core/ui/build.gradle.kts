@@ -1,9 +1,10 @@
-import com.android.build.api.dsl.androidLibrary
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeMultiplatform)
 }
 
 kotlin {
@@ -27,9 +28,25 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
 
+            // Compose
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.lifecycle.viewmodel)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.material3)
         }
     }
 }
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.thejohnsondev.ui.generated.resources"
+    generateResClass = always
+}
+
 
 android {
     namespace = "com.thejohnsondev.ui"
