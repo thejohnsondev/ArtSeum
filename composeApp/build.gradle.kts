@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -41,6 +42,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
             implementation(libs.navigation.compose)
+
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
