@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 sealed class Screens {
     @Serializable
-    object List : Screens()
+    data object List : Screens()
+
     @Serializable
     data class Details(val artworkId: String) : Screens()
 }
