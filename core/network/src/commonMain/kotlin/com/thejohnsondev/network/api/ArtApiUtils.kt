@@ -44,7 +44,7 @@ suspend inline fun <reified T> callWithMapping(call: (() -> HttpResponse)): Resu
 
 fun URLBuilder.defaultUrlConfig() {
     protocol = URLProtocol.HTTPS
-    host = BASE_URL
+    host = ARTIC_BASE_URL
 }
 
 fun HttpMessageBuilder.defaultRequestConfig(
