@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -54,6 +55,14 @@ kotlin {
 
             // Konnection check
             implementation(libs.konnection)
+
+            // Serialization
+            implementation(libs.kotlinx.serialization)
+
+            // Coil3
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
+            implementation(libs.coil.network.okhttp)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)

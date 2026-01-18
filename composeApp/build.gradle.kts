@@ -42,8 +42,20 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
             implementation(libs.navigation.compose)
+            implementation(compose.materialIconsExtended)
 
+            // Serialization
             implementation(libs.ktor.serialization.kotlinx.json)
+
+            // Coil3
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
+
+            // Koin
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.lifecycle.viewmodel)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
