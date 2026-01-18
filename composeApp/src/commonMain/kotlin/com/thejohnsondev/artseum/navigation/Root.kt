@@ -4,12 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import coil3.compose.setSingletonImageLoaderFactory
 import com.thejohnsondev.artseum.screens.details.ArtworkDetailsScreen
-import com.thejohnsondev.artseum.screens.list.ArtworkListScreen
+import com.thejohnsondev.artseum.screens.list.ArtListScreen
+import com.thejohnsondev.network.imageloader.getAsyncImageLoader
 import com.thejohonsondev.ui.designsystem.ArtSeumTheme
 
 @Composable
 fun Root() {
+    setSingletonImageLoaderFactory { context ->
+        getAsyncImageLoader(context)
+    }
+
     ArtSeumTheme(
         darkTheme = true
     ) {
@@ -20,7 +26,7 @@ fun Root() {
             startDestination = Screens.List
         ) {
             composableAnimated<Screens.List> {
-                ArtworkListScreen(
+                ArtListScreen(
                     goToDetails = { artworkId ->
                         navController.navigate(Screens.Details(artworkId))
                     }
