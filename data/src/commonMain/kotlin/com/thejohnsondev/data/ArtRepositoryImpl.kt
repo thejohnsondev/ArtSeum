@@ -1,7 +1,7 @@
 package com.thejohnsondev.data
 
-import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.ArtRepository
+import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.network.api.ArtApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class ArtRepositoryImpl(
     private val api: ArtApiService
-): ArtRepository {
+) : ArtRepository {
 
     private val _artworks = MutableStateFlow<List<Artwork>>(emptyList())
     override val artworks: Flow<List<Artwork>> = _artworks.asStateFlow()
@@ -22,7 +22,11 @@ class ArtRepositoryImpl(
 
         return if (result.isSuccess) {
             val remoteData = result.getOrNull()?.data ?: emptyList()
-            val domainData = remoteData.map { it.toDomainModel() }
+            val domainData = remoteData.map {
+                it.toDomainModel(
+                    config = result.getOrNull()?.config
+                )
+            }
             _artworks.value += domainData
             Result.success(Unit)
         } else {
@@ -33,19 +37,31 @@ class ArtRepositoryImpl(
     override suspend fun fetchArtworkById(artworkId: String): Result<Artwork> {
         val artworkResult = api.fetchArtworkById(artworkId)
         if (artworkResult.isFailure) {
-            return Result.failure(artworkResult.exceptionOrNull() ?: Exception("Unknown error occurred"))
+            return Result.failure(
+                artworkResult.exceptionOrNull() ?: Exception("Unknown error occurred")
+            )
         }
         val artwork = artworkResult.getOrNull()?.data
             ?: return Result.failure(Exception("Artwork not found"))
-        return Result.success(artwork.toDomainModel())
+        return Result.success(
+            artwork.toDomainModel(
+                config = artworkResult.getOrNull()?.config
+            )
+        )
     }
 
     override suspend fun searchArtworks(query: String): Result<List<Artwork>> {
         val searchResult = api.searchArtworks(query)
         if (searchResult.isFailure) {
-            return Result.failure(searchResult.exceptionOrNull() ?: Exception("Unknown error occurred"))
+            return Result.failure(
+                searchResult.exceptionOrNull() ?: Exception("Unknown error occurred")
+            )
         }
         val artworks = searchResult.getOrNull()?.data ?: emptyList()
-        return Result.success(artworks.map { it.toDomainModel() })
+        return Result.success(artworks.map {
+            it.toDomainModel(
+                config = searchResult.getOrNull()?.config
+            )
+        })
     }
 }
