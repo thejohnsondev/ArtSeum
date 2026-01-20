@@ -9,26 +9,29 @@ import com.thejohnsondev.network.api.models.Thumbnail
 fun ArtworkData.toDomainModel(
     config: Config?
 ): Artwork {
-    val mainImageUrl = this.imageId.takeIf { it.isNotBlank() }?.let { imageId ->
-        "${config?.iiifUrl}/$imageId/full/843,/0/default.jpg"
-    }
-    val restImagesUrls = this.altImageIds.map { imageId ->
-        "${config?.iiifUrl}/$imageId/full/843,/0/default.jpg"
-    }
+    val mainImageUrl = this.imageId
+        ?.takeIf { it.isNotBlank() }
+        ?.let { imageId -> "${config?.iiifUrl}/$imageId/full/843,/0/default.jpg" }
+
+    val restImagesUrls = this.altImageIds
+        .orEmpty()
+        .mapNotNull { id -> id.takeIf { it.isNotBlank() } }
+        .map { id -> "${config?.iiifUrl}/$id/full/843,/0/default.jpg" }
+
     return Artwork(
-        id = this.id,
-        title = this.title,
-        artist = this.artistDisplay.ifBlank { "Unknown Artist" },
-        date = this.dateDisplay,
-        medium = this.mediumDisplay,
-        description = this.shortDescription ?: this.description,
+        id = this.id ?: this.hashCode(),
+        title = this.title.orEmpty(),
+        artist = this.artistDisplay?.ifBlank { "Unknown Artist" } ?: "Unknown Artist",
+        date = this.dateDisplay.orEmpty(),
+        medium = this.mediumDisplay.orEmpty(),
+        description = null,
         mainImageUrl = mainImageUrl,
         restImagesUrls = restImagesUrls,
-        department = this.departmentTitle,
-        isPublicDomain = this.isPublicDomain,
-        creditLine = this.creditLine,
-        dimensions = this.dimensions,
-        thumbnail = this.thumbnail?.toDomainModel()
+        department = this.departmentTitle.orEmpty(),
+        isPublicDomain = this.isPublicDomain ?: false,
+        creditLine = this.creditLine.orEmpty(),
+        dimensions = this.dimensions.orEmpty(),
+        thumbnail = this.thumbnail?.toDomainModel(),
     )
 }
 
