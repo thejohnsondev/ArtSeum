@@ -15,11 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Crop
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
@@ -41,6 +38,7 @@ import com.thejohnsondev.domain.model.Artwork
 import com.thejohonsondev.ui.designsystem.Colors
 import com.thejohonsondev.ui.designsystem.PreviewTheme
 import com.thejohonsondev.ui.designsystem.Size16
+import com.thejohonsondev.ui.designsystem.Size20
 import com.thejohonsondev.ui.designsystem.Size4
 import com.thejohonsondev.ui.designsystem.Size8
 import com.thejohonsondev.ui.utils.padding
@@ -59,6 +57,7 @@ fun ArtworkDisplay(
 
     Column(
         modifier = modifier
+            .clip(RoundedCornerShape(Size20))
     ) {
         Box(
             modifier = Modifier
@@ -136,7 +135,7 @@ fun ArtworkDisplay(
                                 Color.Black.copy(alpha = 0.2f),
                                 Color.Black.copy(alpha = 0.4f),
                                 Color.Black.copy(alpha = 0.7f),
-                                Color.Black.copy(alpha = 1f),
+                                Color.Black.copy(alpha = 0.8f),
                             ),
                             startY = 0f,
                         )
@@ -145,7 +144,7 @@ fun ArtworkDisplay(
 
             Column(
                 modifier = Modifier
-                    .padding(Size16)
+                    .padding(horizontal = Size16, bottom = Size16)
                     .align(Alignment.BottomStart)
             ) {
                 if (images.size > 1) {
@@ -174,90 +173,27 @@ fun ArtworkDisplay(
                     text = artwork.title,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Colors.colorScheme.textPrimaryInverted
+                    color = Colors.colorScheme.textPrimaryInverted,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
+                    modifier = Modifier.padding(top = Size4),
                     text = artwork.artist,
                     style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(top = Size4),
-                    color = Colors.colorScheme.textPrimaryInverted
-                )
-            }
-
-        }
-        Column(
-            modifier = Modifier
-                .background(Color.Black)
-                .padding(horizontal = Size16, bottom = Size16)
-                .fillMaxWidth()
-
-        ) {
-            Text(
-                text = artwork.medium,
-                style = MaterialTheme.typography.bodySmall,
-                color = Colors.colorScheme.textSecondaryInverted
-            )
-            Row(
-                modifier = Modifier
-                    .padding(top = Size8),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(Size16),
-                    imageVector = Icons.Default.AccessTime,
-                    contentDescription = null,
-                    tint = Colors.colorScheme.textSecondaryInverted
+                    color = Colors.colorScheme.textPrimaryInverted,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    modifier = Modifier
-                        .padding(start = Size8),
-                    text = artwork.date,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Colors.colorScheme.textSecondaryInverted
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .padding(top = Size8),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(Size16),
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = null,
-                    tint = Colors.colorScheme.textSecondaryInverted
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = Size8),
-                    text = artwork.department,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Colors.colorScheme.textSecondaryInverted
-                )
-            }
-            if (artwork.dimensions.isNotBlank()) {
-                Row(
                     modifier = Modifier
                         .padding(top = Size8),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(Size16),
-                        imageVector = Icons.Default.Crop,
-                        contentDescription = null,
-                        tint = Colors.colorScheme.textSecondaryInverted
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(start = Size8),
-                        text = artwork.dimensions,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Colors.colorScheme.textSecondaryInverted
-                    )
-                }
+                    text = artwork.medium,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Colors.colorScheme.textSecondaryInverted,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
