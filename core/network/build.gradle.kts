@@ -34,6 +34,7 @@ kotlin {
 
             // Ktor
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.coil.network.okhttp)
         }
         commonMain.dependencies {
             api(projects.core.common)
@@ -62,7 +63,6 @@ kotlin {
             // Coil3
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
-            implementation(libs.coil.network.okhttp)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
