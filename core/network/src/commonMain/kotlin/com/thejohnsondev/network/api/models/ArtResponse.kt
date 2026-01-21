@@ -230,9 +230,9 @@ data class DimensionsDetail(
     @SerialName("depth")
     val depth: Int? = null,
     @SerialName("width")
-    val width: Int,
+    val width: Int? = null,
     @SerialName("height")
-    val height: Int,
+    val height: Int? = null,
     @SerialName("diameter")
     val diameter: Int? = null,
     @SerialName("clarification")
