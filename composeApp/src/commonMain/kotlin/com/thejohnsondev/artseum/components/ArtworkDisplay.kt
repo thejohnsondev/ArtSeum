@@ -1,5 +1,6 @@
 package com.thejohnsondev.artseum.components
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.thejohnsondev.domain.model.Artwork
@@ -59,6 +61,12 @@ fun ArtworkDisplay(
         artwork.thumbnail?.lqip?.base64ImageToImageBitmap()
     }
 
+    val placeholderPainter = remember(lqipBitmap) {
+        lqipBitmap?.let { BitmapPainter(it) }
+    }
+
+    val context = LocalPlatformContext.current
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(Size20),
@@ -76,30 +84,19 @@ fun ArtworkDisplay(
                         .fillMaxWidth()
                         .wrapContentHeight()
                 ) { page ->
-                    val imageUrl = artwork.imagesUrls?.get(page)
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalPlatformContext.current)
-                            .data(imageUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = artwork.title,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                        placeholder = lqipBitmap?.let { BitmapPainter(it) },
-                        error = lqipBitmap?.let { BitmapPainter(it) },
+                    LoadedImage(
+                        artwork = artwork,
+                        imageUrl = artwork.imagesUrls?.get(page),
+                        context = context,
+                        placeholderPainter = placeholderPainter
                     )
                 }
             } else {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(artwork.imagesUrls?.firstOrNull())
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = artwork.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                    placeholder = lqipBitmap?.let { BitmapPainter(it) }, // convert image bitmap to painter resource
-                    error = lqipBitmap?.let { BitmapPainter(it) }, // convert image bitmap to painter resource
+                LoadedImage(
+                    artwork = artwork,
+                    imageUrl = artwork.imagesUrls?.firstOrNull(),
+                    context = context,
+                    placeholderPainter = placeholderPainter
                 )
             }
 
@@ -163,6 +160,32 @@ fun ArtworkDisplay(
             }
         }
     }
+}
+
+@Composable
+private fun LoadedImage(
+    artwork: Artwork,
+    imageUrl: String?,
+    context: Context,
+    placeholderPainter: BitmapPainter?
+) {
+    val request = remember(imageUrl) {
+        ImageRequest.Builder(context)
+            .data(imageUrl)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .networkCachePolicy(CachePolicy.ENABLED)
+            .crossfade(true)
+            .build()
+    }
+    AsyncImage(
+        model = request,
+        contentDescription = artwork.title,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
+        placeholder = placeholderPainter,
+        error = placeholderPainter,
+    )
 }
 
 @Preview
