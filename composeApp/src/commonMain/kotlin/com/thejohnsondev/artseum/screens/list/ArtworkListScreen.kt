@@ -68,6 +68,16 @@ import com.thejohonsondev.ui.utils.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
+
+// TODO optimize scroll
+// TODO introduce caching
+// TODO make pages smaller
+// TODO add iOS viewModel wrapper
+// TODO make correct modules exportable
+// TODO setup iOS app with DI
+// TODO implement artwork SwiftUI view
+// TODO implement SwiftUI list view
+
 @Composable
 fun ArtListScreen(
     viewModel: ArtListViewModel = koinViewModel(),
@@ -222,11 +232,14 @@ fun ArtworkList(
         contentPadding = PaddingValues(bottom = Size16),
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(
-            items = artworks,
-            key = { _, artwork -> artwork.id }
-        ) { index, artwork ->
-            if (index >= artworks.lastIndex && !isLoadingNextPage) {
+        items(
+            count = artworks.size,
+            key = { index -> artworks[index].id },
+            contentType = { "artwork_item" } // OPTIMIZATION: Helps recycling pool
+        ) { index ->
+            val artwork = artworks[index]
+
+            if (index >= artworks.lastIndex - 2 && !isLoadingNextPage) {
                 LaunchedEffect(Unit) {
                     onEndOfListReached()
                 }
@@ -234,15 +247,14 @@ fun ArtworkList(
             ArtworkDisplay(
                 modifier = Modifier
                     .padding(Size4)
-                    .clickable {
-                        onItemClick(artwork.id)
-                    },
+                    .fillMaxWidth()
+                    .clickable { onItemClick(artwork.id) },
                 artwork = artwork
             )
         }
 
         if (isLoadingNextPage) {
-            item {
+            item(key = "loading_indicator") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
