@@ -27,7 +27,7 @@ class ArtRepositoryImpl(
                     config = result.getOrNull()?.config
                 )
             }
-            _artworks.value += domainData
+            _artworks.value = (_artworks.value + domainData).distinctBy { it.id }
             Result.success(Unit)
         } else {
             Result.failure(result.exceptionOrNull() ?: Exception("Unknown error"))

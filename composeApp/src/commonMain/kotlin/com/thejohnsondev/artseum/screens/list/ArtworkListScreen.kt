@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,7 +32,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +64,7 @@ import com.thejohonsondev.ui.designsystem.Size24
 import com.thejohonsondev.ui.designsystem.Size4
 import com.thejohonsondev.ui.designsystem.Size8
 import com.thejohonsondev.ui.utils.padding
+import com.thejohonsondev.ui.utils.reachedBottom
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -227,6 +227,20 @@ fun ArtworkList(
 ) {
     val listState = rememberLazyListState()
 
+    val reachedBottom by remember {
+        derivedStateOf {
+            listState.reachedBottom()
+        }
+    }
+
+    LaunchedEffect(reachedBottom) {
+        if (reachedBottom && artworks.isNotEmpty()) {
+
+            onEndOfListReached()
+        }
+    }
+
+
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(bottom = Size16),
@@ -235,15 +249,10 @@ fun ArtworkList(
         items(
             count = artworks.size,
             key = { index -> artworks[index].id },
-            contentType = { "artwork_item" } // OPTIMIZATION: Helps recycling pool
+            contentType = { "artwork_item" }
         ) { index ->
             val artwork = artworks[index]
 
-            if (index >= artworks.lastIndex - 2 && !isLoadingNextPage) {
-                LaunchedEffect(Unit) {
-                    onEndOfListReached()
-                }
-            }
             ArtworkDisplay(
                 modifier = Modifier
                     .padding(Size4)
@@ -253,16 +262,14 @@ fun ArtworkList(
             )
         }
 
-        if (isLoadingNextPage) {
-            item(key = "loading_indicator") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Size16),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(Size24))
-                }
+        item(key = "loading_indicator") {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Size16),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(Size24))
             }
         }
     }
