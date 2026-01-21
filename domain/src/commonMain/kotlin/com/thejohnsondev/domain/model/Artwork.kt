@@ -7,8 +7,7 @@ data class Artwork(
     val date: String,
     val medium: String,
     val description: String?,
-    val mainImageUrl: String?,
-    val restImagesUrls: List<String>?,
+    val imagesUrls: List<String>?,
     val department: String,
     val isPublicDomain: Boolean,
     val creditLine: String,
@@ -29,8 +28,10 @@ data class Artwork(
             date = "Venice: Paganinus de Paganinus, 1509",
             medium = "Letterpress and woodcut in black with hand lettering in red ink...",
             description = "A work made of letterpress and woodcut...",
-            mainImageUrl = "$iiifUrl/$imageId/full/843,/0/default.jpg",
-            restImagesUrls = altImageIds.map { "$iiifUrl/$it/full/843,/0/default.jpg" },
+            imagesUrls = listOf(
+                "$iiifUrl/$imageId/full/843,/0/default.jpg",
+                "$iiifUrl/675f8eab-2976-0cea-aeec-d7ab4b78dea9/full/843,/0/default.jpg"
+            ),
             department = "Prints and Drawings", // Assumed from context of the artist
             isPublicDomain = true, // Assumed default for verification
             creditLine = "Gift of...", // Placeholder

@@ -18,6 +18,12 @@ fun ArtworkData.toDomainModel(
         .mapNotNull { id -> id.takeIf { it.isNotBlank() } }
         .map { id -> "${config?.iiifUrl}/$id/full/843,/0/default.jpg" }
 
+    val imagesListUrls = if (mainImageUrl != null) {
+        listOf(mainImageUrl) + restImagesUrls
+    } else {
+        restImagesUrls
+    }
+
     return Artwork(
         id = this.id ?: this.hashCode(),
         title = this.title.orEmpty(),
@@ -25,8 +31,7 @@ fun ArtworkData.toDomainModel(
         date = this.dateDisplay.orEmpty(),
         medium = this.mediumDisplay.orEmpty(),
         description = null,
-        mainImageUrl = mainImageUrl,
-        restImagesUrls = restImagesUrls,
+        imagesUrls = imagesListUrls,
         department = this.departmentTitle.orEmpty(),
         isPublicDomain = this.isPublicDomain ?: false,
         creditLine = this.creditLine.orEmpty(),
