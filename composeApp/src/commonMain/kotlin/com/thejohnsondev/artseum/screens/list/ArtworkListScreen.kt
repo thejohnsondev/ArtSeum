@@ -269,7 +269,10 @@ fun ArtworkList(
                     .padding(Size16),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(modifier = Modifier.size(Size24))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(Size24),
+                    color = Colors.colorScheme.primary
+                )
             }
         }
     }
