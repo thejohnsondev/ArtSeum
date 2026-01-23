@@ -19,12 +19,15 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            export(projects.domain)
+            export(projects.presentation)
         }
     }
     
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            api(projects.domain)
+            api(projects.presentation)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
