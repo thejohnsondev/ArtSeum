@@ -13,6 +13,7 @@ kotlin {
     }
     
     listOf(
+        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -26,6 +27,10 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
+            api(projects.core.common)
+            api(projects.core.network)
+            api(projects.core.ui)
+            api(projects.data)
             api(projects.domain)
             api(projects.presentation)
         }

@@ -12,7 +12,7 @@ class AndroidApp: Application() {
     private fun initKoin() {
         KoinInitializer(
             context = applicationContext,
-        ).init()
+        ).start()
     }
 
 }

@@ -7,7 +7,7 @@ import com.thejohnsondev.network.di.networkModule
 import com.thejohnsondev.presentation.di.presentationModule
 
 expect class KoinInitializer {
-    fun init()
+    fun start()
 }
 
 val commonModules = listOf(
