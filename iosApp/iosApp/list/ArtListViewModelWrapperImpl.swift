@@ -10,7 +10,7 @@ import SwiftUI
 import Shared
 
 @MainActor
-class ArtListViewModelWrapper: ObservableObject {
+class ArtListViewModelWrapperImpl: ArtListViewModelProtocol, ObservableObject {
     
     private let viewModel: ArtListViewModel
 
@@ -30,7 +30,6 @@ class ArtListViewModelWrapper: ObservableObject {
         observationTask?.cancel()
     }
     
-    // MARK: - Observation Logic (SKIE Enabled)
     private func startObserving() {
         observationTask = Task { [weak self] in
             guard let self = self else { return }
@@ -41,12 +40,9 @@ class ArtListViewModelWrapper: ObservableObject {
         }
     }
     
-    // MARK: - Action Handling
     func perform(action: ArtListViewModel.Action) {
         viewModel.perform(action: action)
     }
-    
-    // MARK: - SwiftUI Helpers
 
     var searchQueryBinding: Binding<String> {
         Binding(
