@@ -1,6 +1,5 @@
 package com.thejohnsondev.artseum.components
 
-import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,8 +32,8 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.PlatformContext
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.CachePolicy
@@ -48,6 +47,7 @@ import com.thejohonsondev.ui.designsystem.Size20
 import com.thejohonsondev.ui.designsystem.Size4
 import com.thejohonsondev.ui.designsystem.Size8
 import com.thejohonsondev.ui.utils.base64ImageToImageBitmap
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -166,7 +166,7 @@ fun ArtworkDisplay(
 private fun LoadedImage(
     artwork: Artwork,
     imageUrl: String?,
-    context: Context,
+    context: PlatformContext,
     placeholderPainter: BitmapPainter?
 ) {
     val request = remember(imageUrl) {
