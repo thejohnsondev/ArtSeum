@@ -1,6 +1,7 @@
 package com.thejohnsondev.network.api
 
 import com.thejohnsondev.network.api.models.ArtResponse
+import com.thejohnsondev.network.api.models.ArtSearchResponse
 import com.thejohnsondev.network.api.models.ArtworkListResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -36,14 +37,18 @@ class ArtApiServiceImpl(
     }
 
     override suspend fun searchArtworks(
-        query: String
-    ): Result<ArtworkListResponse> = callWithMapping {
+        query: String,
+        page: Int,
+        limit: Int,
+    ): Result<ArtSearchResponse> = callWithMapping {
         client.get {
             defaultRequestConfig()
             url {
                 defaultUrlConfig()
                 path(URL_ARTWORKS_SEARCH)
                 parameters.append("q", query)
+                parameters.append("page", page.toString())
+                parameters.append("limit", limit.toString())
             }
         }
     }

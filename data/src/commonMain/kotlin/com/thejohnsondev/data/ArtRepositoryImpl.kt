@@ -2,6 +2,7 @@ package com.thejohnsondev.data
 
 import com.thejohnsondev.domain.ArtRepository
 import com.thejohnsondev.domain.model.Artwork
+import com.thejohnsondev.domain.model.ArtworkSearchItem
 import com.thejohnsondev.network.api.ArtApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,18 +51,20 @@ class ArtRepositoryImpl(
         )
     }
 
-    override suspend fun searchArtworks(query: String): Result<List<Artwork>> {
-        val searchResult = api.searchArtworks(query)
+    override suspend fun searchArtworks(
+        query: String,
+        page: Int,
+        limit: Int
+    ): Result<List<ArtworkSearchItem>> {
+        val searchResult = api.searchArtworks(query = query, page = page, limit = limit)
         if (searchResult.isFailure) {
             return Result.failure(
                 searchResult.exceptionOrNull() ?: Exception("Unknown error occurred")
             )
         }
-        val artworks = searchResult.getOrNull()?.data ?: emptyList()
-        return Result.success(artworks.map {
-            it.toDomainModel(
-                config = searchResult.getOrNull()?.config
-            )
+        val artworkSearchItems = searchResult.getOrNull()?.data ?: emptyList()
+        return Result.success(artworkSearchItems.map {
+            it.toDomainModel()
         })
     }
 }

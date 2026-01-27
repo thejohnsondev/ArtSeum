@@ -1,6 +1,7 @@
 package com.thejohnsondev.domain
 
 import com.thejohnsondev.domain.model.Artwork
+import com.thejohnsondev.domain.model.ArtworkSearchItem
 import kotlinx.coroutines.flow.Flow
 
 interface ArtRepository {
@@ -15,6 +16,8 @@ interface ArtRepository {
     suspend fun fetchArtworkById(artworkId: String): Result<Artwork>
 
     suspend fun searchArtworks(
-        query: String
-    ): Result<List<Artwork>>
+        query: String,
+        page: Int,
+        limit: Int
+    ): Result<List<ArtworkSearchItem>>
 }

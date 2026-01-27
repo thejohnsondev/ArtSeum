@@ -210,19 +210,7 @@ data class ArtworkData(
     @SerialName("updated_at")
     val updatedAt: String? = null,
     @SerialName("timestamp")
-    val timestamp: String
-)
-
-@Serializable
-data class Thumbnail(
-    @SerialName("lqip")
-    val lqip: String,
-    @SerialName("width")
-    val width: Int,
-    @SerialName("height")
-    val height: Int,
-    @SerialName("alt_text")
-    val altText: String
+    val timestamp: String? = null
 )
 
 @Serializable

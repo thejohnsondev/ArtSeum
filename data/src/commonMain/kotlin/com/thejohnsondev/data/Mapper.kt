@@ -1,8 +1,10 @@
 package com.thejohnsondev.data
 
 import com.thejohnsondev.domain.model.Artwork
+import com.thejohnsondev.domain.model.ArtworkSearchItem
 import com.thejohnsondev.domain.model.ArtworkThumbnail
 import com.thejohnsondev.network.api.models.ArtworkData
+import com.thejohnsondev.network.api.models.ArtworkSearchData
 import com.thejohnsondev.network.api.models.Config
 import com.thejohnsondev.network.api.models.Thumbnail
 
@@ -46,5 +48,13 @@ fun Thumbnail.toDomainModel(): ArtworkThumbnail {
         width = this.width,
         height = this.height,
         altText = this.altText
+    )
+}
+
+fun ArtworkSearchData.toDomainModel(): ArtworkSearchItem {
+    return ArtworkSearchItem(
+        id = this.id ?: this.hashCode(),
+        title = this.title.orEmpty(),
+        thumbnail = this.thumbnail?.toDomainModel()
     )
 }

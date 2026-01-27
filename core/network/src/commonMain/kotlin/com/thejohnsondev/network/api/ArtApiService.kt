@@ -1,6 +1,7 @@
 package com.thejohnsondev.network.api
 
 import com.thejohnsondev.network.api.models.ArtResponse
+import com.thejohnsondev.network.api.models.ArtSearchResponse
 import com.thejohnsondev.network.api.models.ArtworkListResponse
 
 interface ArtApiService {
@@ -12,6 +13,8 @@ interface ArtApiService {
     suspend fun fetchArtworkById(artworkId: String): Result<ArtResponse>
 
     suspend fun searchArtworks(
-        query: String
-    ): Result<ArtworkListResponse>
+        query: String,
+        page: Int,
+        limit: Int,
+    ): Result<ArtSearchResponse>
 }
