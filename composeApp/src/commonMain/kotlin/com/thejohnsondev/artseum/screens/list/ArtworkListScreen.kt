@@ -1,7 +1,6 @@
 package com.thejohnsondev.artseum.screens.list
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,13 +52,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thejohnsondev.artseum.components.ArtworkDisplay
+import com.thejohnsondev.artseum.components.ArtworkSearchRow
 import com.thejohnsondev.common.base.ScreenState
 import com.thejohnsondev.domain.model.Artwork
+import com.thejohnsondev.domain.model.ArtworkSearchItem
+import com.thejohnsondev.domain.model.SearchResult
 import com.thejohnsondev.presentation.ArtListViewModel
 import com.thejohonsondev.ui.components.FadingBox
 import com.thejohonsondev.ui.designsystem.Colors
+import com.thejohonsondev.ui.designsystem.Percent50
 import com.thejohonsondev.ui.designsystem.PreviewTheme
 import com.thejohonsondev.ui.designsystem.Size16
 import com.thejohonsondev.ui.designsystem.Size24
@@ -104,7 +110,7 @@ private fun ArtListContent(
     goToDetails: (Int) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var isSearching by remember { mutableStateOf(false) }
+    var isSearchActive by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -115,13 +121,12 @@ private fun ArtListContent(
         TopAppBar(
             title = {
                 AnimatedVisibility(
-                    !isSearching,
-                    enter = fadeIn(animationSpec = tween(500)),
-                    exit = fadeOut(animationSpec = tween(500))
+                    visible = !isSearchActive,
+                    enter = fadeIn(),
+                    exit = fadeOut()
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -136,34 +141,28 @@ private fun ArtListContent(
                                 .statusBarsPadding()
                                 .padding(vertical = Size16),
                             onClick = {
-                                isSearching = true
+                                isSearchActive = true
                             }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Search Icon",
+                                contentDescription = "Search",
                                 tint = Colors.colorScheme.onBackground
                             )
                         }
                     }
                 }
                 AnimatedVisibility(
-                    isSearching,
-                    enter = expandVertically(
-                        expandFrom = Alignment.Top,
-                        animationSpec = tween(500)
-                    ),
-                    exit = shrinkVertically(
-                        shrinkTowards = Alignment.Top,
-                        animationSpec = tween(500)
-                    )
+                    visible = isSearchActive,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
                 ) {
                     SearchBar(
                         query = state.searchQuery,
                         onQueryChange = { onAction(ArtListViewModel.Action.Search(it)) },
                         onClearClick = {
                             onAction(ArtListViewModel.Action.ClearSearch)
-                            isSearching = false
+                            isSearchActive = false
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -178,43 +177,129 @@ private fun ArtListContent(
                 containerColor = Colors.colorScheme.background
             )
         )
-        Box {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    when (state.screenState) {
-                        is ScreenState.Loading if state.displayedArtworks.isEmpty() -> {
-                            LoadingView()
-                        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (state.isSearching) {
+                when (val result = state.searchResult) {
+                    is SearchResult.Idle -> {
+                        // Idle state - show nothing or search prompt
+                    }
 
-                        is ScreenState.Error if state.displayedArtworks.isEmpty() -> {
-                            ErrorView(message = "An error occurred") {
-                                onAction(ArtListViewModel.Action.Refresh)
-                            }
-                        }
+                    is SearchResult.Loading -> {
+                        LoadingView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(Percent50)
+                        )
+                    }
 
-                        else -> {
-                            ArtworkList(
-                                artworks = state.displayedArtworks,
-                                isLoadingNextPage = state.screenState is ScreenState.Loading,
-                                onItemClick = goToDetails,
-                                onEndOfListReached = {
-                                    onAction(ArtListViewModel.Action.LoadNextPage)
-                                }
-                            )
+                    is SearchResult.Empty -> {
+                        EmptyView(message = "No results found for \"${state.searchQuery}\"")
+                    }
+
+                    is SearchResult.Error -> {
+                        ErrorView(message = "Could not load search results") {
+                            onAction(ArtListViewModel.Action.Refresh)
                         }
+                    }
+
+                    is SearchResult.Success -> {
+                        SearchList(
+                            items = result.data,
+                            isLoadingNextPage = state.screenState is ScreenState.Loading,
+                            onItemClick = goToDetails,
+                            onEndOfListReached = { onAction(ArtListViewModel.Action.LoadNextPage) }
+                        )
+                    }
+                }
+            } else {
+                when (state.screenState) {
+                    is ScreenState.Loading if state.browseArtworks.isEmpty() -> {
+                        LoadingView(
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    is ScreenState.Error if state.browseArtworks.isEmpty() -> {
+                        ErrorView(message = "Could not load artworks") {
+                            onAction(ArtListViewModel.Action.Refresh)
+                        }
+                    }
+
+                    else -> {
+                        ArtworkList(
+                            artworks = state.browseArtworks,
+                            isLoadingNextPage = state.screenState is ScreenState.Loading,
+                            onItemClick = goToDetails,
+                            onEndOfListReached = { onAction(ArtListViewModel.Action.LoadNextPage) }
+                        )
                     }
                 }
             }
+
             FadingBox(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Size16),
+                modifier = Modifier.fillMaxWidth().height(Size16).align(Alignment.TopCenter),
                 color = Colors.colorScheme.background
             )
         }
+    }
+}
+
+@Composable
+fun SearchList(
+    items: List<ArtworkSearchItem>,
+    isLoadingNextPage: Boolean,
+    onItemClick: (Int) -> Unit,
+    onEndOfListReached: () -> Unit
+) {
+    val listState = rememberLazyListState()
+
+    val reachedBottom by remember { derivedStateOf { listState.reachedBottom() } }
+    LaunchedEffect(reachedBottom) {
+        if (reachedBottom && items.isNotEmpty()) onEndOfListReached()
+    }
+
+    LazyColumn(
+        state = listState,
+        contentPadding = PaddingValues(bottom = Size16),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(
+            count = items.size,
+            key = { index -> items[index].id ?: index },
+            contentType = { "search_item" }
+        ) { index ->
+            val item = items[index]
+            ArtworkSearchRow(
+                item = item,
+                onClick = { item.id?.let { onItemClick(it) } }
+            )
+            HorizontalDivider(modifier = Modifier.padding(horizontal = Size16), thickness = 0.5.dp)
+        }
+
+        if (isLoadingNextPage) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(Size16),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(Size24))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyView(message: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Colors.colorScheme.onSurface
+        )
     }
 }
 
@@ -307,10 +392,11 @@ fun SearchBar(
 }
 
 @Composable
-private fun LoadingView() {
+private fun LoadingView(
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .background(Colors.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
