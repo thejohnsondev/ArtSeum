@@ -30,9 +30,6 @@ kotlin {
             api(projects.core.network)
 
             implementation(libs.kotlinx.coroutines.core)
-
-            // Logs
-            implementation(libs.napier)
         }
     }
 }

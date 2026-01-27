@@ -33,6 +33,9 @@ kotlin {
 
             // Serialization
             implementation(libs.kotlinx.serialization)
+
+            // Logs
+            implementation(libs.napier)
         }
     }
 }
