@@ -74,16 +74,6 @@ import com.thejohonsondev.ui.utils.reachedBottom
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
-
-// TODO optimize scroll
-// TODO introduce caching
-// TODO make pages smaller
-// TODO add iOS viewModel wrapper
-// TODO make correct modules exportable
-// TODO setup iOS app with DI
-// TODO implement artwork SwiftUI view
-// TODO implement SwiftUI list view
-
 @Composable
 fun ArtListScreen(
     viewModel: ArtListViewModel = koinViewModel(),
