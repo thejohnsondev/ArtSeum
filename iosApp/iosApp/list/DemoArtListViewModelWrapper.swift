@@ -19,10 +19,11 @@ class DemoArtListViewModelWrapper: ArtListViewModelProtocol {
     init(state: ArtListViewModel.State = .init(
         screenState: ScreenState.ShowContent(),
         browseArtworks: [Artwork.companion.demo,],
-        searchResults: [],
+        searchResult: SearchResult.Idle(),
         isSearching: false,
         searchQuery: "",
-        currentPage: 1
+        currentPage: 1,
+        searchPage: 1
     )) {
         self.state = state
         self.localSearchQuery = state.searchQuery
@@ -40,14 +41,16 @@ class DemoArtListViewModelWrapper: ArtListViewModelProtocol {
         Binding(
             get: { self.state.searchQuery },
             set: { query in
-                var newState = self.state
+                // var newState = self.state // State is immutable in KMP usually, copy needed?
+                // Using constructor for demo
                 self.state = ArtListViewModel.State(
                     screenState: self.state.screenState,
                     browseArtworks: self.state.browseArtworks,
-                    searchResults: self.state.searchResults,
+                    searchResult: self.state.searchResult,
                     isSearching: !query.isEmpty,
                     searchQuery: query,
-                    currentPage: self.state.currentPage
+                    currentPage: self.state.currentPage,
+                    searchPage: self.state.searchPage
                 )
             }
         )
