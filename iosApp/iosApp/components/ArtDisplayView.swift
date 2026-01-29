@@ -10,6 +10,8 @@ import Shared
 
 struct ArtDisplayView: View {
     let artwork: Artwork
+    var cornerRadius: CGFloat = 20
+    var shadowRadius: CGFloat = 4
     
     @State private var currentPage = 0
     
@@ -74,8 +76,8 @@ struct ArtDisplayView: View {
         }
         .aspectRatio(1, contentMode: .fit)
         .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(radius: 4)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        .shadow(radius: shadowRadius)
     }
 }
 

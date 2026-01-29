@@ -29,8 +29,8 @@ struct ArtListScreen<VM: ArtListViewModelProtocol>: View {
             }
             .navigationTitle("Artworks")
             .searchable(text: viewModel.searchQueryBinding, prompt: "Search Artworks")
-            .onAppear {
-                viewModel.perform(action: ArtListViewModel.ActionLoadData())
+            .navigationDestination(for: Int32.self) { artworkId in
+                ArtDetailsScreen(viewModel: ArtDetailsViewModelWrapperImpl(artworkId: artworkId))
             }
         }
         .preferredColorScheme(.dark)
@@ -100,13 +100,16 @@ default:
             LazyVStack(spacing: 12) {
                 ForEach(viewModel.state.browseArtworks, id: \.id) {
                     artwork in
-                    ArtDisplayView(artwork: artwork)
-                        .padding(.horizontal, 4)
-                        .onAppear {
-                            if artwork == viewModel.state.browseArtworks.last {
-                                viewModel.perform(action: ArtListViewModel.ActionLoadNextPage())
-                            }
+                    NavigationLink(value: artwork.id) {
+                        ArtDisplayView(artwork: artwork)
+                            .padding(.horizontal, 4)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .onAppear {
+                        if artwork == viewModel.state.browseArtworks.last {
+                            viewModel.perform(action: ArtListViewModel.ActionLoadNextPage())
                         }
+                    }
                 }
                 
                 if viewModel.state.screenState is ScreenState.Loading && !viewModel.state.browseArtworks.isEmpty {
@@ -127,12 +130,15 @@ default:
             LazyVStack(spacing: 0) {
                 ForEach(items, id: \.id) {
                     item in
-                    SearchItemView(item: item)
-                        .onAppear {
-                            if item.id == items.last?.id {
-                                viewModel.perform(action: ArtListViewModel.ActionLoadNextPage())
-                            }
+                    NavigationLink(value: item.id?.int32Value ?? 0) {
+                        SearchItemView(item: item)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .onAppear {
+                        if item.id == items.last?.id {
+                            viewModel.perform(action: ArtListViewModel.ActionLoadNextPage())
                         }
+                    }
                     
                     Divider()
                         .background(Color.gray.opacity(0.3))
