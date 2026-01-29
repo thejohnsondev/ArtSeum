@@ -3,6 +3,7 @@
 
     <style name="Theme.ArtSeum" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">#0B0B0B</item>
     </style>
 
     <style name="SplashScreenTheme" parent="Theme.SplashScreen">
