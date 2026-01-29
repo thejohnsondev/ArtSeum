@@ -209,14 +209,14 @@ private fun PrimaryInfoBlock(
         statusBadgeText?.let {
             Spacer(modifier = Modifier.height(Size8))
             Surface(
-                color = Colors.colorScheme.primary.copy(alpha = 0.1f),
+                color = Colors.colorScheme.primary,
                 shape = RoundedCornerShape(Size16),
                 border = null
             ) {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.labelMedium,
-                    color = Colors.colorScheme.primary,
+                    color = Colors.colorScheme.background,
                     modifier = Modifier.padding(horizontal = Size16, vertical = Size4)
                 )
             }

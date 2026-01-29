@@ -36,7 +36,7 @@ class CustomColorScheme(
 
 object Colors {
     private val lightColors = CustomColorScheme(
-        primary = Color(0xff6A4223),
+        primary = Color(0xFF895323),
         onPrimary = Color(0xFFFFFFFF),
         primaryContainer = Color(0xffe3f8fa),
         error = Color(0xFFFF3F5F),
@@ -66,7 +66,7 @@ object Colors {
         idColor4 = Color(0xFFCAD8F0),
     )
     private val darkColors = CustomColorScheme(
-        primary = Color(0xff6A4223),
+        primary = Color(0xFF895323),
         onPrimary = Color(0xFF111111),
         primaryContainer = Color(0xffe3f8fa),
         error = Color(0xFFFF3F5F),
