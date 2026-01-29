@@ -1,5 +1,6 @@
 package com.thejohnsondev.artseum
 
+import com.thejohnsondev.presentation.ArtDetailsViewModel
 import com.thejohnsondev.presentation.ArtListViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -10,4 +11,5 @@ fun doInitKoin() {
 
 class ViewModelFactory : KoinComponent {
     fun makeArtListViewModel(): ArtListViewModel = get()
+    fun makeArtDetailsViewModel(): ArtDetailsViewModel = get()
 }
