@@ -63,10 +63,10 @@ class ArtDetailsViewModel(
         _state.update { it.copy(selectedImageIndex = index) }
     }
 
-    sealed interface Action {
-        data class LoadDetail(val artworkId: Int) : Action
-        data object BackClicked : Action
-        data class ImageSwiped(val index: Int) : Action
+    sealed class Action {
+        data class LoadDetail(val artworkId: Int) : Action()
+        data object BackClicked : Action()
+        data class ImageSwiped(val index: Int) : Action()
     }
 
     data class State(
