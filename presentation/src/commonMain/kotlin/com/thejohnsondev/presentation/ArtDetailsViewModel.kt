@@ -6,11 +6,14 @@ import com.thejohnsondev.common.base.OneTimeEvent
 import com.thejohnsondev.common.base.ScreenState
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.usecase.GetArtworkDetailUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 
 class ArtDetailsViewModel(
     private val getArtworkDetailUseCase: GetArtworkDetailUseCase
@@ -32,20 +35,23 @@ class ArtDetailsViewModel(
         }
     }
 
-    private fun loadDetail(artworkId: String) = launchLoading {
-        val result = getArtworkDetailUseCase(artworkId)
-        if (result.isSuccess) {
-            val artwork = result.getOrNull()
-            _state.update {
-                it.copy(
-                    artwork = artwork,
-                    // Reset image index on new load
-                    selectedImageIndex = 0
-                )
+    private fun loadDetail(artworkId: Int) = launchLoading {
+        withContext(Dispatchers.IO) {
+            val result = getArtworkDetailUseCase(artworkId)
+            withContext(Dispatchers.Main) {
+                if (result.isSuccess) {
+                    val artwork = result.getOrNull()
+                    _state.update {
+                        it.copy(
+                            artwork = artwork,
+                            selectedImageIndex = 0
+                        )
+                    }
+                    showContent()
+                } else {
+                    showError("Failed to load artwork details")
+                }
             }
-            showContent()
-        } else {
-            showError("Failed to load artwork details")
         }
     }
 
@@ -58,7 +64,7 @@ class ArtDetailsViewModel(
     }
 
     sealed interface Action {
-        data class LoadDetail(val artworkId: String) : Action
+        data class LoadDetail(val artworkId: Int) : Action
         data object BackClicked : Action
         data class ImageSwiped(val index: Int) : Action
     }
@@ -68,10 +74,9 @@ class ArtDetailsViewModel(
         val artwork: Artwork? = null,
         val selectedImageIndex: Int = 0
     ) {
-        // Helpers for UI logic
         val showLocation: Boolean
-            get() = artwork?.latitude != null && artwork?.longitude != null
-        
+            get() = artwork?.latitude != null && artwork.longitude != null
+
         val statusBadgeText: String?
             get() = if (artwork?.isOnView == true) {
                 if (!artwork.galleryTitle.isNullOrBlank()) {
@@ -82,7 +87,7 @@ class ArtDetailsViewModel(
             } else {
                 null
             }
-            
+
         val facts: List<Pair<String, String>>
             get() = artwork?.let { art ->
                 listOfNotNull(
@@ -93,6 +98,6 @@ class ArtDetailsViewModel(
                 )
             } ?: emptyList()
     }
-    
+
     data object NavigateBack : OneTimeEvent()
 }
