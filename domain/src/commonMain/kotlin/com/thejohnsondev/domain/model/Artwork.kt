@@ -12,36 +12,52 @@ data class Artwork(
     val isPublicDomain: Boolean,
     val creditLine: String,
     val dimensions: String,
-    val thumbnail: ArtworkThumbnail?
+    val thumbnail: ArtworkThumbnail?,
+    val latitude: Double?,
+    val longitude: Double?,
+    val placeOfOrigin: String,
+    val galleryTitle: String?,
+    val isOnView: Boolean,
+    val style: String?,
+    val classification: String?,
+    val exhibitionHistory: String?,
+    val publicationHistory: String?
 ) {
     companion object {
-        private val iiifUrl = "https://www.artic.edu/iiif/2"
-        private val imageId = "28e2c365-a8c5-37b8-e113-28b96a06b6a4"
-        private val altImageIds = listOf(
-            "675f8eab-2976-0cea-aeec-d7ab4b78dea9",
-            "47b0e70c-f38e-411e-7953-e82a09d47054"
-        )
+        private const val IIIF_URL = "https://www.artic.edu/iiif/2"
+        private const val DEMO_IMAGE_ID = "28e2c365-a8c5-37b8-e113-28b96a06b6a4"
+
         val demo = Artwork(
             id = 272694,
             title = "Divine Proportion",
-            artist = "Leonardo da Vinci (Italian, 1452-1519)\nWritten by Luca Pacioli (Italian, 1445-1517)",
-            date = "Venice: Paganinus de Paganinus, 1509",
-            medium = "Letterpress and woodcut in black with hand lettering in red ink...",
+            artist = "Leonardo da Vinci (Italian, 1452-1519)",
+            date = "1509",
+            medium = "Letterpress and woodcut in black...",
             description = "A work made of letterpress and woodcut...",
             imagesUrls = listOf(
-                "$iiifUrl/$imageId/full/843,/0/default.jpg",
-                "$iiifUrl/675f8eab-2976-0cea-aeec-d7ab4b78dea9/full/843,/0/default.jpg"
+                "$IIIF_URL/$DEMO_IMAGE_ID/full/843,/0/default.jpg",
+                "$IIIF_URL/675f8eab-2976-0cea-aeec-d7ab4b78dea9/full/843,/0/default.jpg"
             ),
-            department = "Prints and Drawings", // Assumed from context of the artist
-            isPublicDomain = true, // Assumed default for verification
-            creditLine = "Gift of...", // Placeholder
-            dimensions = "Book: 28.5 × 20.5 cm (11 1/4 × 8 1/16 in.)", // Placeholder based on scale
+            department = "Prints and Drawings",
+            isPublicDomain = true,
+            creditLine = "Gift of...",
+            dimensions = "Book: 28.5 × 20.5 cm",
             thumbnail = ArtworkThumbnail(
                 lqip = "data:image/gif;base64,R0lGODlhBwAFAPUAAL+vlr+wmb2zo8CvlsGxmse1m8q4ns26oM27o8+9o82/rNC9o9nJsdrJsd3Ntd/NtN/Pt97PuN7Pud/Ru+HRuuDQu+DRu+LSveXVvOnWvN7TweDUwOfXwO/ex+/fyPHgx/DgyfLgyPXiygAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAHAAUAAAYhwAHG0pA4AgeQxiGYLAydjUPBORQ+ngxIlABYLg2LhBAEADs=",
                 width = 10376,
                 height = 7355,
-                altText = "A work made of letterpress and woodcut in black with hand lettering in red ink..."
-            )
+                altText = "Demo Alt Text"
+            ),
+            // Demo New Fields
+            latitude = 41.8795845,
+            longitude = -87.6237126,
+            placeOfOrigin = "Venice",
+            galleryTitle = "Gallery 209",
+            isOnView = true,
+            style = "Renaissance",
+            classification = "Book",
+            exhibitionHistory = "Exhibited in Chicago, 2010...",
+            publicationHistory = "Published in 1509..."
         )
     }
 }

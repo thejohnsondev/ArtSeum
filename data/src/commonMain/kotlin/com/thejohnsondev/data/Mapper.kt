@@ -32,13 +32,22 @@ fun ArtworkData.toDomainModel(
         artist = this.artistDisplay?.ifBlank { "Unknown Artist" } ?: "Unknown Artist",
         date = this.dateDisplay.orEmpty(),
         medium = this.mediumDisplay.orEmpty(),
-        description = null,
+        description = this.shortDescription ?: this.description,
         imagesUrls = imagesListUrls,
         department = this.departmentTitle.orEmpty(),
         isPublicDomain = this.isPublicDomain ?: false,
         creditLine = this.creditLine.orEmpty(),
         dimensions = this.dimensions.orEmpty(),
         thumbnail = this.thumbnail?.toDomainModel(),
+        latitude = this.latitude,
+        longitude = this.longitude,
+        placeOfOrigin = this.placeOfOrigin.orEmpty(),
+        galleryTitle = this.galleryTitle,
+        isOnView = this.isOnView ?: false,
+        style = this.styleTitle,
+        classification = this.classificationTitle,
+        exhibitionHistory = this.exhibitionHistory,
+        publicationHistory = this.publicationHistory
     )
 }
 
