@@ -1,7 +1,10 @@
 package com.thejohnsondev.artseum.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
@@ -11,6 +14,7 @@ import com.thejohnsondev.artseum.screens.list.ArtListScreen
 import com.thejohnsondev.common.Logger
 import com.thejohnsondev.network.imageloader.getAsyncImageLoader
 import com.thejohonsondev.ui.designsystem.ArtSeumTheme
+import com.thejohonsondev.ui.designsystem.Colors
 
 @Composable
 fun Root() {
@@ -27,25 +31,30 @@ fun Root() {
     ) {
         val navController = rememberNavController()
 
-        NavHost(
-            navController = navController,
-            startDestination = Screens.List
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = Colors.colorScheme.background
         ) {
-            composableAnimated<Screens.List> {
-                ArtListScreen(
-                    goToDetails = { artworkId ->
-                        navController.navigate(Screens.Details(artworkId))
-                    }
-                )
-            }
-            composableAnimated<Screens.Details> {
-                val artworkId = it.toRoute<Screens.Details>().artworkId
-                ArtworkDetailsScreen(
-                    artworkId = artworkId,
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                )
+            NavHost(
+                navController = navController,
+                startDestination = Screens.List
+            ) {
+                composableAnimated<Screens.List> {
+                    ArtListScreen(
+                        goToDetails = { artworkId ->
+                            navController.navigate(Screens.Details(artworkId))
+                        }
+                    )
+                }
+                composableAnimated<Screens.Details> {
+                    val artworkId = it.toRoute<Screens.Details>().artworkId
+                    ArtworkDetailsScreen(
+                        artworkId = artworkId,
+                        onBackClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         }
     }
