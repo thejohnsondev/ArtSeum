@@ -81,10 +81,6 @@ fun ArtListScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.perform(ArtListViewModel.Action.LoadData)
-    }
-
     ArtListContent(
         state = state,
         onAction = viewModel::perform,
@@ -100,7 +96,7 @@ private fun ArtListContent(
     goToDetails: (Int) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var isSearchActive by remember { mutableStateOf(false) }
+    var isSearchActive by remember(state.isSearching) { mutableStateOf(state.isSearching) }
 
     Column(
         modifier = Modifier

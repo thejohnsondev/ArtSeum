@@ -30,19 +30,18 @@ class ArtListViewModel(
 
     private val _searchQueryFlow = MutableStateFlow("")
 
+    init {
+        observeArtworks()
+        observeSearchResults()
+    }
+
     fun perform(action: Action) {
         when (action) {
-            is Action.LoadData -> loadData()
             is Action.Refresh -> refresh()
             is Action.LoadNextPage -> loadNextPage()
             is Action.Search -> search(action.query)
             is Action.ClearSearch -> clearSearch()
         }
-    }
-
-    private fun loadData() = launch {
-        observeArtworks()
-        observeSearchResults()
     }
 
     private fun observeArtworks() = launch {
@@ -145,7 +144,6 @@ class ArtListViewModel(
     }
 
     sealed class Action {
-        data object LoadData : Action()
         data object Refresh : Action()
         data object LoadNextPage : Action()
         data class Search(val query: String) : Action()
