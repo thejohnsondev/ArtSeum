@@ -42,7 +42,7 @@ fun Root() {
                 val artworkId = it.toRoute<Screens.Details>().artworkId
                 ArtworkDetailsScreen(
                     artworkId = artworkId,
-                    goBack = {
+                    onBackClick = {
                         navController.popBackStack()
                     }
                 )

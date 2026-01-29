@@ -49,11 +49,18 @@ import com.thejohonsondev.ui.designsystem.Size8
 import com.thejohonsondev.ui.utils.base64ImageToImageBitmap
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArtworkDisplay(
     artwork: Artwork,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(Size20),
+    elevation: Dp = Size4,
+    showInfo: Boolean = true,
+    titleMaxLines: Int = 2
 ) {
     val pagerState = rememberPagerState(pageCount = { artwork.imagesUrls?.size ?: 0 })
 
@@ -69,8 +76,8 @@ fun ArtworkDisplay(
 
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(Size20),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        shape = shape,
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Box(
             modifier = Modifier
@@ -114,54 +121,55 @@ fun ArtworkDisplay(
                     )
             )
 
-            Column(
-                modifier = Modifier
-                    .padding(Size16)
-                    .align(Alignment.BottomStart)
-            ) {
-                if (artwork.imagesUrls.orEmpty().size > 1) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = Size16),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        repeat(artwork.imagesUrls.orEmpty().size) { iteration ->
-                            val color =
-                                if (pagerState.currentPage == iteration) Color.White else Color.White.copy(
-                                    alpha = 0.5f
+            if (showInfo) {
+                Column(
+                    modifier = Modifier
+                        .padding(Size16)
+                        .align(Alignment.BottomStart)
+                ) {
+                    if (artwork.imagesUrls.orEmpty().size > 1) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = Size16),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            repeat(artwork.imagesUrls.orEmpty().size) { iteration ->
+                                val color =
+                                    if (pagerState.currentPage == iteration) Color.White else Color.White.copy(
+                                        alpha = 0.5f
+                                    )
+                                Box(
+                                    modifier = Modifier
+                                        .padding(Size4)
+                                        .clip(CircleShape)
+                                        .background(color)
+                                        .size(Size8)
                                 )
-                            Box(
-                                modifier = Modifier
-                                    .padding(Size4)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .size(Size8)
-                            )
+                            }
                         }
                     }
+                    Text(
+                        text = artwork.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        maxLines = titleMaxLines,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = Size4),
+                        text = artwork.artist,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
-                Text(
-                    text = artwork.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    modifier = Modifier.padding(top = Size4),
-                    text = artwork.artist,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
         }
     }
 }
-
 @Composable
 private fun LoadedImage(
     artwork: Artwork,
