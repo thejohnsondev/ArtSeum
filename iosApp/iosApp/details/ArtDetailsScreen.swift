@@ -26,6 +26,16 @@ struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
             }
             
         }
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.state.error != nil },
+            set: { _ in viewModel.perform(action: ArtDetailsViewModel.ActionDismissError()) }
+        )) {
+            Button("Done") {
+                viewModel.perform(action: ArtDetailsViewModel.ActionDismissError())
+            }
+        } message: {
+            Text(viewModel.state.error?.message ?? "")
+        }
         .preferredColorScheme(.dark)
     }
     

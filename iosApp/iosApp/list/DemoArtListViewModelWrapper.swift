@@ -23,7 +23,8 @@ class DemoArtListViewModelWrapper: ArtListViewModelProtocol {
         isSearching: false,
         searchQuery: "",
         currentPage: 1,
-        searchPage: 1
+        searchPage: 1,
+        error: nil
     )) {
         self.state = state
         self.localSearchQuery = state.searchQuery
@@ -50,7 +51,8 @@ class DemoArtListViewModelWrapper: ArtListViewModelProtocol {
                     isSearching: !query.isEmpty,
                     searchQuery: query,
                     currentPage: self.state.currentPage,
-                    searchPage: self.state.searchPage
+                    searchPage: self.state.searchPage,
+                    error: self.state.error
                 )
             }
         )

@@ -2,7 +2,9 @@ package com.thejohnsondev.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.thejohnsondev.common.base.BaseViewModel
+import com.thejohnsondev.common.base.DisplayableMessageValue
 import com.thejohnsondev.common.base.ScreenState
+import com.thejohnsondev.common.base.toDisplayableMessage
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.model.SearchResult
 import com.thejohnsondev.domain.usecase.FetchArtworksUseCase
@@ -41,7 +43,12 @@ class ArtListViewModel(
             is Action.LoadNextPage -> loadNextPage()
             is Action.Search -> search(action.query)
             is Action.ClearSearch -> clearSearch()
+            is Action.DismissError -> dismissError()
         }
+    }
+
+    private fun dismissError() {
+        _state.update { it.copy(error = null) }
     }
 
     private fun observeArtworks() = launch {
@@ -103,6 +110,8 @@ class ArtListViewModel(
             }
             showContent()
         } else {
+            val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
+            _state.update { it.copy(error = throwable.toDisplayableMessage()) }
             showContent()
         }
     }
@@ -139,6 +148,8 @@ class ArtListViewModel(
             _state.update { it.copy(currentPage = page) }
             showContent()
         } else {
+            val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
+            _state.update { it.copy(error = throwable.toDisplayableMessage()) }
             showContent()
         }
     }
@@ -148,6 +159,7 @@ class ArtListViewModel(
         data object LoadNextPage : Action()
         data class Search(val query: String) : Action()
         data object ClearSearch : Action()
+        data object DismissError : Action()
     }
 
     data class State(
@@ -157,6 +169,7 @@ class ArtListViewModel(
         val isSearching: Boolean = false,
         val searchQuery: String = "",
         val currentPage: Int = 1,
-        val searchPage: Int = 1
+        val searchPage: Int = 1,
+        val error: DisplayableMessageValue? = null
     )
 }

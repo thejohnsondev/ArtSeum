@@ -61,6 +61,7 @@ import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.model.ArtworkSearchItem
 import com.thejohnsondev.domain.model.SearchResult
 import com.thejohnsondev.presentation.ArtListViewModel
+import com.thejohonsondev.ui.components.ErrorDialog
 import com.thejohonsondev.ui.components.FadingBox
 import com.thejohonsondev.ui.designsystem.Colors
 import com.thejohonsondev.ui.designsystem.Percent50
@@ -226,6 +227,13 @@ private fun ArtListContent(
                 modifier = Modifier.fillMaxWidth().height(Size16).align(Alignment.TopCenter),
                 color = Colors.colorScheme.background
             )
+
+            state.error?.let {
+                ErrorDialog(
+                    error = it,
+                    onDismiss = { onAction(ArtListViewModel.Action.DismissError) }
+                )
+            }
         }
     }
 }

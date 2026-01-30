@@ -2,8 +2,10 @@ package com.thejohnsondev.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.thejohnsondev.common.base.BaseViewModel
+import com.thejohnsondev.common.base.DisplayableMessageValue
 import com.thejohnsondev.common.base.OneTimeEvent
 import com.thejohnsondev.common.base.ScreenState
+import com.thejohnsondev.common.base.toDisplayableMessage
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.usecase.GetArtworkDetailUseCase
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +34,12 @@ class ArtDetailsViewModel(
             is Action.LoadDetail -> loadDetail(action.artworkId)
             is Action.BackClicked -> handleBackClick()
             is Action.ImageSwiped -> updateImageIndex(action.index)
+            is Action.DismissError -> dismissError()
         }
+    }
+
+    private fun dismissError() {
+        _state.update { it.copy(error = null) }
     }
 
     private fun loadDetail(artworkId: Int) = launchLoading {
@@ -49,7 +56,9 @@ class ArtDetailsViewModel(
                     }
                     showContent()
                 } else {
-                    showError("Failed to load artwork details")
+                    val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
+                    _state.update { it.copy(error = throwable.toDisplayableMessage()) }
+                    showContent()
                 }
             }
         }
@@ -67,12 +76,14 @@ class ArtDetailsViewModel(
         data class LoadDetail(val artworkId: Int) : Action()
         data object BackClicked : Action()
         data class ImageSwiped(val index: Int) : Action()
+        data object DismissError : Action()
     }
 
     data class State(
         val screenState: ScreenState = ScreenState.None,
         val artwork: Artwork? = null,
-        val selectedImageIndex: Int = 0
+        val selectedImageIndex: Int = 0,
+        val error: DisplayableMessageValue? = null
     ) {
         val showLocation: Boolean
             get() = artwork?.latitude != null && artwork.longitude != null

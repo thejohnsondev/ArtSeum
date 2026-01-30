@@ -15,7 +15,8 @@ class DemoArtDetailsViewModelWrapper: ArtDetailsViewModelProtocol {
     init(state: ArtDetailsViewModel.State = .init(
         screenState: ScreenState.ShowContent(),
         artwork: Artwork.companion.demo,
-        selectedImageIndex: 0
+        selectedImageIndex: 0,
+        error: nil
     )) {
         self.state = state
     }
@@ -27,7 +28,8 @@ class DemoArtDetailsViewModelWrapper: ArtDetailsViewModelProtocol {
             self.state = ArtDetailsViewModel.State(
                 screenState: self.state.screenState,
                 artwork: self.state.artwork,
-                selectedImageIndex: swipeAction.index
+                selectedImageIndex: swipeAction.index,
+                error: self.state.error
             )
         }
     }

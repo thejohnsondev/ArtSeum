@@ -59,6 +59,7 @@ import com.thejohnsondev.artseum.components.ArtworkDisplay
 import com.thejohnsondev.common.base.ScreenState
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.presentation.ArtDetailsViewModel
+import com.thejohonsondev.ui.components.ErrorDialog
 import com.thejohonsondev.ui.components.FadingBox
 import com.thejohonsondev.ui.designsystem.Colors
 import com.thejohonsondev.ui.designsystem.Size16
@@ -185,6 +186,13 @@ private fun ArtDetailsContent(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
                 tint = Color.White
+            )
+        }
+
+        state.error?.let {
+            ErrorDialog(
+                error = it,
+                onDismiss = { onAction(ArtDetailsViewModel.Action.DismissError) }
             )
         }
     }

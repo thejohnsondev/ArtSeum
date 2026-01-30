@@ -32,6 +32,16 @@ struct ArtListScreen<VM: ArtListViewModelProtocol>: View {
             .navigationDestination(for: Int32.self) { artworkId in
                 ArtDetailsScreen(viewModel: ArtDetailsViewModelWrapperImpl(artworkId: artworkId))
             }
+            .alert("Error", isPresented: Binding(
+                get: { viewModel.state.error != nil },
+                set: { _ in viewModel.perform(action: ArtListViewModel.ActionDismissError()) }
+            )) {
+                Button("Done") {
+                    viewModel.perform(action: ArtListViewModel.ActionDismissError())
+                }
+            } message: {
+                Text(viewModel.state.error?.message ?? "")
+            }
         }
         .preferredColorScheme(.dark)
     }
