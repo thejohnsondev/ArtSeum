@@ -1,0 +1,44 @@
+<objective>
+Update the search result list items in the iOS application to match the Android design specifications and refactor the item into a reusable component.
+</objective>
+
+<context>
+The current implementation of the search results list in `iosApp/iosApp/list/ArtListScreen.swift` uses a simple inline `VStack` for each item.
+We need to upgrade this to a more polished UI that mirrors the Android version and extract it for better maintainability.
+The data model is `ArtworkSearchItem`.
+Use `LoadedImage` for displaying the thumbnail if available.
+</context>
+
+<requirements>
+1. **Create New Component**:
+   - Create a new SwiftUI view named `SearchItemView` in `./iosApp/iosApp/components/SearchItemView.swift`.
+   - This view should take `ArtworkSearchItem` as a parameter.
+
+2. **UI Design Specifications**:
+   - **Layout**: A `HStack` (Row) containing:
+     - **Thumbnail**: A small rounded square image (use `LoadedImage` or similar).
+     - **Content**: A `VStack` (Column) containing the Title and Alt Text.
+   - **Text Styling**:
+     - Title: Max 2 lines.
+     - Alt Text: Max 2 lines.
+     - Add a visual Divider between the Title and Alt Text.
+   - **Background**: The item background must be `Color.black`.
+   - **Styling**: Ensure the text colors are appropriate for a black background (e.g., White/Gray).
+
+3. **Integration**:
+   - Update `searchList` in `./iosApp/iosApp/list/ArtListScreen.swift` to use the new `SearchItemView`.
+
+4. **Preview**:
+   - Add a `#Preview` block to `SearchItemView.swift` with mock data to verify the layout.
+</requirements>
+
+<output>
+Create and modify the following files:
+- `./iosApp/iosApp/components/SearchItemView.swift` (New file)
+- `./iosApp/iosApp/list/ArtListScreen.swift` (Modify to use SearchItemView)
+</output>
+
+<verification>
+- Verify `SearchItemView` compiles and includes a preview.
+- Verify `ArtListScreen` compiles and correctly passes data to `SearchItemView`.
+</verification>

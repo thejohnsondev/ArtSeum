@@ -24,7 +24,6 @@ struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
                 content(artwork: artwork)
             }
             
-//            header
         }
         .preferredColorScheme(.dark)
     }
@@ -65,28 +64,6 @@ struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
         .coordinateSpace(name: "scroll")
         .onPreferenceChange(ViewOffsetKey.self) { scrollOffset = $0 }
         .ignoresSafeArea(edges: .top)
-    }
-    
-    private var header: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .top) {
-                
-                if scrollOffset > 0 {
-                    LinearGradient(
-                        colors: [Color.black, Color.black.opacity(0)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: geometry.safeAreaInsets.top + 40)
-                    .ignoresSafeArea(edges: .top)
-                    .transition(.opacity)
-                }
-                
-            }
-        }
-        
-        
-        .frame(height: 60) // Fixed height for header area
     }
 }
 
