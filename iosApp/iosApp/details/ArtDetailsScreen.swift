@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Shared
+import MapKit
 
 struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
     @StateObject var viewModel: VM
@@ -224,20 +225,19 @@ private struct LocationMap: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            ZStack(alignment: .bottomTrailing) {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(hex: 0x3A3A3A).opacity(0.2))
-                    .aspectRatio(1.7, contentMode: .fit)
+            if let lat = artwork.latitude, let lon = artwork.longitude {
+                let coordinate = CLLocationCoordinate2D(latitude: lat.doubleValue, longitude: lon.doubleValue)
                 
-                Image(systemName: "mappin.and.ellipse")
-                    .font(.system(size: 40))
-                    .foregroundColor(Color(hex: 0x895323))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                Text("Map View Placeholder")
-                    .font(.caption2)
-                    .foregroundColor(Color(hex: 0xAFAFAF))
-                    .padding(8)
+                Map(initialPosition: .region(MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+                ))) {
+                    Marker(artwork.title, coordinate: coordinate)
+                        .tint(Color(hex: 0x895323))
+                }
+                .mapStyle(.standard(elevation: .realistic))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .aspectRatio(1.7, contentMode: .fit)
             }
             
             HStack(spacing: 4) {
