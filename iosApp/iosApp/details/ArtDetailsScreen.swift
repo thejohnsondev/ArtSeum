@@ -9,9 +9,16 @@ import MapKit
 
 struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
     @StateObject var viewModel: VM
-    @Environment(\.dismiss) var dismiss
     
     @State private var scrollOffset: CGFloat = 0
+    
+    private var statusBadgeText: String? {
+        guard let badge = viewModel.state.statusBadge else { return nil }
+        if let gallery = badge.galleryTitle, !gallery.isEmpty {
+            return "On View - \(gallery)"
+        }
+        return "On View"
+    }
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -51,7 +58,7 @@ struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
                 
                 PrimaryInfoBlock(
                     artwork: artwork,
-                    statusBadgeText: viewModel.state.statusBadge?.galleryTitle
+                    statusBadgeText: statusBadgeText
                 )
                 
                 AboutSection(
