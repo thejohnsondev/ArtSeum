@@ -114,29 +114,31 @@ private struct AboutSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("About")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
             
-            let description = artwork.description.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-            VStack(alignment: .leading, spacing: 0) {
-                Text(description)
-                    .font(.body)
+            if let description = artwork.description_?.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression) {
+                Text("About")
+                    .font(.title2)
+                    .fontWeight(.bold)
                     .foregroundColor(.white)
-                    .lineLimit(isExpanded ? nil : 3)
                 
-                if description.count > 150 {
-                    Button(action: {
-                        withAnimation {
-                            isExpanded.toggle()
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(description)
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .lineLimit(isExpanded ? nil : 3)
+                    
+                    if description.count > 150 {
+                        Button(action: {
+                            withAnimation {
+                                isExpanded.toggle()
+                            }
+                        }) {
+                            Text(isExpanded ? "Read Less" : "Read More")
+                                .font(.body)
+                                .foregroundColor(Color(hex: 0x895323))
                         }
-                    }) {
-                        Text(isExpanded ? "Read Less" : "Read More")
-                            .font(.body)
-                            .foregroundColor(Color(hex: 0x895323))
+                        .padding(.top, 4)
                     }
-                    .padding(.top, 4)
                 }
             }
             
