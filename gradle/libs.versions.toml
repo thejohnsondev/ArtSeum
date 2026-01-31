@@ -25,6 +25,7 @@ coilCompose = "3.3.0"
 foundationLayout = "1.10.1"
 napier = "2.7.1"
 skie = "0.10.9"
+turbine = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -45,6 +46,7 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
@@ -58,6 +60,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor-cl
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-client" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-client" }
 konnection = { module = "dev.tmapps:konnection", version.ref = "konnection" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 # Dependency Injection (Koin)
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
