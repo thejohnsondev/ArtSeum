@@ -8,36 +8,16 @@ import SwiftUI
 import Shared
 
 @MainActor
-class ArtDetailsViewModelWrapperImpl: ArtDetailsViewModelProtocol, ObservableObject {
+class ArtDetailsViewModelWrapperImpl: BaseViewModelWrapper<ArtDetailsViewModel.State>, ArtDetailsViewModelProtocol {
     
     private let viewModel: ArtDetailsViewModel
-
-    @Published var state: ArtDetailsViewModel.State
-    
-    private var observationTask: Task<Void, Never>?
     
     init(artworkId: Int32) {
         self.viewModel = ViewModelFactory().makeArtDetailsViewModel()
-        
-        self.state = viewModel.state.value
-        
-        startObserving()
+        super.init(initialState: viewModel.state.value)
+        startObserving(viewModel.state)
         
         self.perform(action: ArtDetailsViewModel.ActionLoadDetail(artworkId: artworkId))
-    }
-    
-    deinit {
-        observationTask?.cancel()
-    }
-    
-    private func startObserving() {
-        observationTask = Task { [weak self] in
-            guard let self = self else { return }
-            
-            for await newState in self.viewModel.state {
-                self.state = newState
-            }
-        }
     }
     
     func perform(action: ArtDetailsViewModel.Action) {

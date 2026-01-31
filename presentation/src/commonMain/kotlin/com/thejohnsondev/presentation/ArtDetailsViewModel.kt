@@ -6,6 +6,7 @@ import com.thejohnsondev.common.base.DisplayableMessageValue
 import com.thejohnsondev.common.base.OneTimeEvent
 import com.thejohnsondev.common.base.ScreenState
 import com.thejohnsondev.common.base.toDisplayableMessage
+import com.thejohnsondev.common.stripHtml
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.usecase.GetArtworkDetailUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,9 +47,9 @@ class ArtDetailsViewModel(
             _state.update {
                 it.copy(
                     artwork = artwork,
-                    formattedDescription = artwork?.description?.let(::stripHtml),
-                    formattedHistory = artwork?.exhibitionHistory?.let(::stripHtml),
-                    formattedPublicationHistory = artwork?.publicationHistory?.let(::stripHtml),
+                    formattedDescription = artwork?.description?.stripHtml(),
+                    formattedHistory = artwork?.exhibitionHistory?.stripHtml(),
+                    formattedPublicationHistory = artwork?.publicationHistory?.stripHtml(),
                     selectedImageIndex = 0
                 )
             }
@@ -68,10 +69,6 @@ class ArtDetailsViewModel(
         _state.update { it.copy(selectedImageIndex = index) }
     }
 
-    private fun stripHtml(html: String): String {
-        return html.replace(Regex("<.*?>"), "")
-    }
-
     sealed class Action {
         data class LoadDetail(val artworkId: Int) : Action()
         data object BackClicked : Action()
@@ -79,9 +76,10 @@ class ArtDetailsViewModel(
         data object DismissError : Action()
     }
 
-    enum class FactType {
-        Medium, Dimensions, Style, Place
-    }
+    data class Fact(
+        val label: String,
+        val value: String
+    )
 
     data class StatusBadge(
         val isOnView: Boolean,
@@ -107,13 +105,13 @@ class ArtDetailsViewModel(
                 null
             }
 
-        val facts: List<Pair<FactType, String>>
+        val facts: List<Fact>
             get() = artwork?.let { art ->
                 listOfNotNull(
-                    FactType.Medium to art.medium,
-                    FactType.Dimensions to art.dimensions,
-                    art.style?.let { FactType.Style to it },
-                    FactType.Place to art.placeOfOrigin
+                    Fact("Medium", art.medium),
+                    Fact("Dimensions", art.dimensions),
+                    art.style?.let { Fact("Style", it) },
+                    Fact("Place", art.placeOfOrigin)
                 )
             } ?: emptyList()
     }

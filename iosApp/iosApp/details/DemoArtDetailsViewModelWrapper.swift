@@ -15,6 +15,9 @@ class DemoArtDetailsViewModelWrapper: ArtDetailsViewModelProtocol {
     init(state: ArtDetailsViewModel.State = .init(
         screenState: ScreenState.ShowContent(),
         artwork: Artwork.companion.demo,
+        formattedDescription: "Description",
+        formattedHistory: nil,
+        formattedPublicationHistory: nil,
         selectedImageIndex: 0,
         error: nil
     )) {
@@ -28,6 +31,9 @@ class DemoArtDetailsViewModelWrapper: ArtDetailsViewModelProtocol {
             self.state = ArtDetailsViewModel.State(
                 screenState: self.state.screenState,
                 artwork: self.state.artwork,
+                formattedDescription: self.state.formattedDescription,
+                formattedHistory: self.state.formattedHistory,
+                formattedPublicationHistory: self.state.formattedPublicationHistory,
                 selectedImageIndex: swipeAction.index,
                 error: self.state.error
             )

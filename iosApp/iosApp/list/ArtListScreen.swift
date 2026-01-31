@@ -20,7 +20,7 @@ struct ArtListScreen<VM: ArtListViewModelProtocol>: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color.artSeumBackground.ignoresSafeArea()
                 if viewModel.state.isSearching {
                     searchContent
                 } else {
@@ -55,7 +55,7 @@ struct ArtListScreen<VM: ArtListViewModelProtocol>: View {
             EmptyView()
             
         case is SearchResult.Loading:
-            ProgressView().tint(.white)
+            ProgressView().tint(.artSeumAccent)
             
         case is SearchResult.Empty:
             ContentUnavailableView("No Results", systemImage: "magnifyingglass", description: Text("No results found for \(viewModel.state.searchQuery)"))
@@ -72,7 +72,7 @@ struct ArtListScreen<VM: ArtListViewModelProtocol>: View {
         case let success as SearchResult.Success:
             searchList(items: success.data)
             
-default:
+        default:
             EmptyView()
         }
     }
@@ -82,7 +82,7 @@ default:
         switch viewModel.state.screenState {
         case is ScreenState.Loading:
             if viewModel.state.browseArtworks.isEmpty {
-                ProgressView().tint(.white)
+                ProgressView().tint(.artSeumAccent)
             } else {
                 browseList
             }
@@ -100,7 +100,7 @@ default:
                 browseList
             }
             
-default:
+        default:
             browseList
         }
     }
@@ -151,7 +151,7 @@ default:
                     }
                     
                     Divider()
-                        .background(Color.gray.opacity(0.3))
+                        .background(Color.artSeumSeparator)
                         .padding(.leading, 48)
                 }
                 
@@ -167,7 +167,7 @@ default:
     var loadingIndicator: some View {
         HStack {
             Spacer()
-            ProgressView().tint(.white)
+            ProgressView().tint(.artSeumAccent)
             Spacer()
         }
         .padding(.vertical, 16)
