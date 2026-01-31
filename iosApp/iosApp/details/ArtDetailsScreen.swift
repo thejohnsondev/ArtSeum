@@ -63,7 +63,7 @@ struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
                 
                 AboutSection(
                     description: viewModel.state.formattedDescription,
-                    facts: viewModel.state.facts
+                    facts: mapFacts(viewModel.state.facts)
                 )
                 
                 HistorySection(
@@ -86,6 +86,30 @@ struct ArtDetailsScreen<VM: ArtDetailsViewModelProtocol>: View {
         .onPreferenceChange(ViewOffsetKey.self) { scrollOffset = $0 }
         .ignoresSafeArea(edges: .top)
     }
+    
+    private func mapFacts(_ kFacts: [Any]) -> [FactUiModel] {
+        kFacts.compactMap { item in
+            guard let pair = item as? KotlinPair<AnyObject, AnyObject>,
+                  let type = pair.first as? ArtDetailsViewModel.FactType,
+                  let value = pair.second as? String else { return nil }
+            return FactUiModel(label: label(for: type), value: value)
+        }
+    }
+    
+    private func label(for type: ArtDetailsViewModel.FactType) -> String {
+        switch type {
+        case .medium: return "Medium"
+        case .dimensions: return "Dimensions"
+        case .style: return "Style"
+        case .place: return "Place of Origin"
+        }
+    }
+}
+
+private struct FactUiModel: Identifiable {
+    let id = UUID()
+    let label: String
+    let value: String
 }
 
 private struct PrimaryInfoBlock: View {
@@ -118,7 +142,7 @@ private struct PrimaryInfoBlock: View {
 
 private struct AboutSection: View {
     let description: String?
-    let facts: [ArtDetailsViewModel.Fact]
+    let facts: [FactUiModel]
     
     @State private var isExpanded = false
     
@@ -157,8 +181,7 @@ private struct AboutSection: View {
             
             // Facts Grid
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                ForEach(0..<facts.count, id: \.self) { index in
-                    let fact = facts[index]
+                ForEach(facts) { fact in
                     FactItem(label: fact.label, value: fact.value)
                 }
             }
