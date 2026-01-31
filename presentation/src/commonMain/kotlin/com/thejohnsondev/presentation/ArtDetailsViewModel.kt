@@ -8,14 +8,11 @@ import com.thejohnsondev.common.base.ScreenState
 import com.thejohnsondev.common.base.toDisplayableMessage
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.usecase.GetArtworkDetailUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.withContext
 
 class ArtDetailsViewModel(
     private val getArtworkDetailUseCase: GetArtworkDetailUseCase
@@ -43,24 +40,23 @@ class ArtDetailsViewModel(
     }
 
     private fun loadDetail(artworkId: Int) = launchLoading {
-        withContext(Dispatchers.IO) {
-            val result = getArtworkDetailUseCase(artworkId)
-            withContext(Dispatchers.Main) {
-                if (result.isSuccess) {
-                    val artwork = result.getOrNull()
-                    _state.update {
-                        it.copy(
-                            artwork = artwork,
-                            selectedImageIndex = 0
-                        )
-                    }
-                    showContent()
-                } else {
-                    val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
-                    _state.update { it.copy(error = throwable.toDisplayableMessage()) }
-                    showContent()
-                }
+        val result = getArtworkDetailUseCase(artworkId)
+        if (result.isSuccess) {
+            val artwork = result.getOrNull()
+            _state.update {
+                it.copy(
+                    artwork = artwork,
+                    formattedDescription = artwork?.description?.let(::stripHtml),
+                    formattedHistory = artwork?.exhibitionHistory?.let(::stripHtml),
+                    formattedPublicationHistory = artwork?.publicationHistory?.let(::stripHtml),
+                    selectedImageIndex = 0
+                )
             }
+            showContent()
+        } else {
+            val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
+            _state.update { it.copy(error = throwable.toDisplayableMessage()) }
+            showContent()
         }
     }
 
@@ -72,6 +68,10 @@ class ArtDetailsViewModel(
         _state.update { it.copy(selectedImageIndex = index) }
     }
 
+    private fun stripHtml(html: String): String {
+        return html.replace(Regex("<.*?>"), "")
+    }
+
     sealed class Action {
         data class LoadDetail(val artworkId: Int) : Action()
         data object BackClicked : Action()
@@ -79,33 +79,41 @@ class ArtDetailsViewModel(
         data object DismissError : Action()
     }
 
+    enum class FactType {
+        Medium, Dimensions, Style, Place
+    }
+
+    data class StatusBadge(
+        val isOnView: Boolean,
+        val galleryTitle: String? = null
+    )
+
     data class State(
         val screenState: ScreenState = ScreenState.None,
         val artwork: Artwork? = null,
+        val formattedDescription: String? = null,
+        val formattedHistory: String? = null,
+        val formattedPublicationHistory: String? = null,
         val selectedImageIndex: Int = 0,
         val error: DisplayableMessageValue? = null
     ) {
         val showLocation: Boolean
             get() = artwork?.latitude != null && artwork.longitude != null
 
-        val statusBadgeText: String?
+        val statusBadge: StatusBadge?
             get() = if (artwork?.isOnView == true) {
-                if (!artwork.galleryTitle.isNullOrBlank()) {
-                    "On View - ${artwork.galleryTitle}"
-                } else {
-                    "On View"
-                }
+                StatusBadge(isOnView = true, galleryTitle = artwork.galleryTitle)
             } else {
                 null
             }
 
-        val facts: List<Pair<String, String>>
+        val facts: List<Pair<FactType, String>>
             get() = artwork?.let { art ->
                 listOfNotNull(
-                    "Medium" to art.medium,
-                    "Dimensions" to art.dimensions,
-                    art.style?.let { "Style" to it },
-                    "Place" to art.placeOfOrigin
+                    FactType.Medium to art.medium,
+                    FactType.Dimensions to art.dimensions,
+                    art.style?.let { FactType.Style to it },
+                    FactType.Place to art.placeOfOrigin
                 )
             } ?: emptyList()
     }

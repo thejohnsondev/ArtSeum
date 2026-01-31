@@ -86,13 +86,13 @@ class ArtListViewModel(
 
     private fun loadNextPage() {
         val currentState = _state.value
-
         if (currentState.isSearching) {
-            val nextSearchPage = currentState.searchPage + 1
-            fetchSearchResultsNextPage(query = currentState.searchQuery, page = nextSearchPage)
+            fetchSearchResultsNextPage(
+                query = currentState.searchQuery,
+                page = currentState.searchPage + 1
+            )
         } else {
-            val nextPage = currentState.currentPage + 1
-            fetchArtworks(page = nextPage)
+            fetchArtworks(page = currentState.currentPage + 1)
         }
     }
 
@@ -110,9 +110,7 @@ class ArtListViewModel(
             }
             showContent()
         } else {
-            val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
-            _state.update { it.copy(error = throwable.toDisplayableMessage()) }
-            showContent()
+            handleError(result.exceptionOrNull())
         }
     }
 
@@ -148,10 +146,14 @@ class ArtListViewModel(
             _state.update { it.copy(currentPage = page) }
             showContent()
         } else {
-            val throwable = result.exceptionOrNull() ?: Exception("Unknown error")
-            _state.update { it.copy(error = throwable.toDisplayableMessage()) }
-            showContent()
+            handleError(result.exceptionOrNull())
         }
+    }
+
+    private fun handleError(throwable: Throwable?) = launch {
+        val error = throwable ?: Exception("Unknown error")
+        _state.update { it.copy(error = error.toDisplayableMessage()) }
+        showContent()
     }
 
     sealed class Action {

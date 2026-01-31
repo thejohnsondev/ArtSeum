@@ -3,4 +3,20 @@
     <string name="no_internet_error_message">No internet connection. Please check your network and try again.</string>
     <string name="generic_error_message">Something went wrong. Please try again later.</string>
     <string name="done">Done</string>
+    <string name="medium">Medium</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="style">Style</string>
+    <string name="place">Place</string>
+    <string name="about">About</string>
+    <string name="read_more">Read More</string>
+    <string name="read_less">Read Less</string>
+    <string name="exhibition_history">Exhibition History</string>
+    <string name="publication_history">Publication History</string>
+    <string name="location">Location</string>
+    <string name="on_view">On View</string>
+    <string name="retry">Retry</string>
+    <string name="search_artworks">Search Artworks...</string>
+    <string name="clear_search">Clear search</string>
+    <string name="artworks">Artworks</string>
+    <string name="map_view_placeholder">Map View Placeholder</string>
 </resources>

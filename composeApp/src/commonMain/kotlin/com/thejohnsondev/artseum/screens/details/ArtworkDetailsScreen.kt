@@ -59,6 +59,19 @@ import com.thejohnsondev.artseum.components.ArtworkDisplay
 import com.thejohnsondev.common.base.ScreenState
 import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.presentation.ArtDetailsViewModel
+import com.thejohnsondev.ui.generated.resources.Res
+import com.thejohnsondev.ui.generated.resources.about
+import com.thejohnsondev.ui.generated.resources.dimensions
+import com.thejohnsondev.ui.generated.resources.exhibition_history
+import com.thejohnsondev.ui.generated.resources.location
+import com.thejohnsondev.ui.generated.resources.map_view_placeholder
+import com.thejohnsondev.ui.generated.resources.medium
+import com.thejohnsondev.ui.generated.resources.on_view
+import com.thejohnsondev.ui.generated.resources.place
+import com.thejohnsondev.ui.generated.resources.publication_history
+import com.thejohnsondev.ui.generated.resources.read_less
+import com.thejohnsondev.ui.generated.resources.read_more
+import com.thejohnsondev.ui.generated.resources.style
 import com.thejohonsondev.ui.components.ErrorDialog
 import com.thejohonsondev.ui.components.FadingBox
 import com.thejohonsondev.ui.designsystem.Colors
@@ -66,6 +79,7 @@ import com.thejohonsondev.ui.designsystem.Size16
 import com.thejohonsondev.ui.designsystem.Size4
 import com.thejohonsondev.ui.designsystem.Size40
 import com.thejohonsondev.ui.designsystem.Size8
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -138,14 +152,20 @@ private fun ArtDetailsContent(
                     item {
                         PrimaryInfoBlock(
                             artwork = artwork,
-                            statusBadgeText = state.statusBadgeText
+                            statusBadge = state.statusBadge
                         )
                     }
                     item {
-                        AboutSection(artwork = artwork, facts = state.facts)
+                        AboutSection(
+                            description = state.formattedDescription,
+                            facts = state.facts
+                        )
                     }
                     item {
-                        HistorySection(artwork = artwork)
+                        HistorySection(
+                            exhibitionHistory = state.formattedHistory,
+                            publicationHistory = state.formattedPublicationHistory
+                        )
                     }
                     if (state.showLocation) {
                         item {
@@ -169,7 +189,7 @@ private fun ArtDetailsContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(Size40),
-                color = Color.Black
+                color = Colors.colorScheme.background // Was Black, but should probably be background color or scrim
             )
         }
         IconButton(
@@ -178,14 +198,14 @@ private fun ArtDetailsContent(
                 .statusBarsPadding()
                 .padding(Size8)
                 .background(
-                    color = Color.Black.copy(alpha = 0.4f),
+                    color = Colors.colorScheme.background.copy(alpha = 0.4f), // Was Black with alpha
                     shape = CircleShape
                 )
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
-                tint = Color.White
+                tint = Colors.colorScheme.onBackground // Was White
             )
         }
 
@@ -201,7 +221,7 @@ private fun ArtDetailsContent(
 @Composable
 private fun PrimaryInfoBlock(
     artwork: Artwork,
-    statusBadgeText: String?
+    statusBadge: ArtDetailsViewModel.StatusBadge?
 ) {
     Column(
         modifier = Modifier
@@ -214,7 +234,12 @@ private fun PrimaryInfoBlock(
             color = Colors.colorScheme.textSecondary
         )
         
-        statusBadgeText?.let {
+        statusBadge?.let { badge ->
+            val text = if (badge.galleryTitle.isNullOrBlank()) {
+                stringResource(Res.string.on_view)
+            } else {
+                "${stringResource(Res.string.on_view)} - ${badge.galleryTitle}"
+            }
             Spacer(modifier = Modifier.height(Size8))
             Surface(
                 color = Colors.colorScheme.primary,
@@ -222,7 +247,7 @@ private fun PrimaryInfoBlock(
                 border = null
             ) {
                 Text(
-                    text = it,
+                    text = text,
                     style = MaterialTheme.typography.labelMedium,
                     color = Colors.colorScheme.background,
                     modifier = Modifier.padding(horizontal = Size16, vertical = Size4)
@@ -235,8 +260,8 @@ private fun PrimaryInfoBlock(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AboutSection(
-    artwork: Artwork,
-    facts: List<Pair<String, String>>
+    description: String?,
+    facts: List<Pair<ArtDetailsViewModel.FactType, String>>
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     
@@ -246,16 +271,14 @@ private fun AboutSection(
             .padding(Size16)
     ) {
         Text(
-            text = "About",
+            text = stringResource(Res.string.about),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = Colors.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(Size8))
         
-        artwork.description?.let { description ->
-            val cleanDescription = description.replace(Regex("<.*?>"), "") // Simple HTML tag strip
-            
+        description?.let { cleanDescription ->
             Text(
                 text = cleanDescription,
                 style = MaterialTheme.typography.bodyLarge,
@@ -271,7 +294,7 @@ private fun AboutSection(
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                 ) {
                     Text(
-                        text = if (isExpanded) "Read Less" else "Read More",
+                        text = if (isExpanded) stringResource(Res.string.read_less) else stringResource(Res.string.read_more),
                         color = Colors.colorScheme.primary
                     )
                 }
@@ -286,7 +309,13 @@ private fun AboutSection(
             horizontalArrangement = Arrangement.spacedBy(Size16),
             verticalArrangement = Arrangement.spacedBy(Size16)
         ) {
-            facts.forEach { (label, value) ->
+            facts.forEach { (type, value) ->
+                val label = when(type) {
+                    ArtDetailsViewModel.FactType.Medium -> stringResource(Res.string.medium)
+                    ArtDetailsViewModel.FactType.Dimensions -> stringResource(Res.string.dimensions)
+                    ArtDetailsViewModel.FactType.Style -> stringResource(Res.string.style)
+                    ArtDetailsViewModel.FactType.Place -> stringResource(Res.string.place)
+                }
                 FactItem(
                     label = label,
                     value = value,
@@ -319,17 +348,20 @@ private fun FactItem(
 }
 
 @Composable
-private fun HistorySection(artwork: Artwork) {
+private fun HistorySection(
+    exhibitionHistory: String?,
+    publicationHistory: String?
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = Size16)
     ) {
-         artwork.exhibitionHistory?.let {
-             ExpandableSection(title = "Exhibition History", content = it)
+         exhibitionHistory?.let {
+             ExpandableSection(title = stringResource(Res.string.exhibition_history), content = it)
          }
-         artwork.publicationHistory?.let {
-             ExpandableSection(title = "Publication History", content = it)
+         publicationHistory?.let {
+             ExpandableSection(title = stringResource(Res.string.publication_history), content = it)
          }
     }
 }
@@ -368,7 +400,7 @@ private fun ExpandableSection(
             exit = shrinkVertically()
         ) {
              Text(
-                text = content.replace(Regex("<.*?>"), ""), // Strip HTML
+                text = content, // Already stripped in VM
                 style = MaterialTheme.typography.bodyMedium,
                 color = Colors.colorScheme.textSecondary,
                 modifier = Modifier.padding(bottom = Size16)
@@ -385,7 +417,7 @@ private fun LocationMap(artwork: Artwork) {
             .padding(Size16)
     ) {
         Text(
-            text = "Location",
+            text = stringResource(Res.string.location),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = Colors.colorScheme.onBackground
@@ -407,7 +439,7 @@ private fun LocationMap(artwork: Artwork) {
              )
              
              Text(
-                 text = "Map View Placeholder",
+                 text = stringResource(Res.string.map_view_placeholder),
                  style = MaterialTheme.typography.labelSmall,
                  color = Colors.colorScheme.textSecondary,
                  modifier = Modifier.align(Alignment.BottomEnd).padding(Size8)
@@ -424,7 +456,7 @@ private fun LocationMap(artwork: Artwork) {
              )
              Spacer(modifier = Modifier.size(Size4))
              Text(
-                text = "${artwork.galleryTitle ?: "Museum"}, ${artwork.placeOfOrigin}",
+                text = if (artwork.isOnView) stringResource(Res.string.on_view) else "${artwork.galleryTitle ?: "Museum"}, ${artwork.placeOfOrigin}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Colors.colorScheme.onBackground
              )

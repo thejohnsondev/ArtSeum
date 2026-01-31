@@ -1,10 +1,9 @@
 package com.thejohnsondev.artseum.screens.list
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +60,11 @@ import com.thejohnsondev.domain.model.Artwork
 import com.thejohnsondev.domain.model.ArtworkSearchItem
 import com.thejohnsondev.domain.model.SearchResult
 import com.thejohnsondev.presentation.ArtListViewModel
+import com.thejohnsondev.ui.generated.resources.Res
+import com.thejohnsondev.ui.generated.resources.artworks
+import com.thejohnsondev.ui.generated.resources.clear_search
+import com.thejohnsondev.ui.generated.resources.retry
+import com.thejohnsondev.ui.generated.resources.search_artworks
 import com.thejohonsondev.ui.components.ErrorDialog
 import com.thejohonsondev.ui.components.FadingBox
 import com.thejohonsondev.ui.designsystem.Colors
@@ -72,6 +76,7 @@ import com.thejohonsondev.ui.designsystem.Size4
 import com.thejohonsondev.ui.designsystem.Size8
 import com.thejohonsondev.ui.utils.padding
 import com.thejohonsondev.ui.utils.reachedBottom
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -107,55 +112,51 @@ private fun ArtListContent(
     ) {
         TopAppBar(
             title = {
-                AnimatedVisibility(
-                    visible = !isSearchActive,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .statusBarsPadding()
-                                .padding(vertical = Size16),
-                            text = "Artworks"
-                        )
-                        IconButton(
-                            modifier = Modifier
-                                .statusBarsPadding()
-                                .padding(vertical = Size16),
-                            onClick = {
-                                isSearchActive = true
-                            }
+                AnimatedContent(
+                    targetState = isSearchActive,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }
+                ) { active ->
+                    if (!active) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = Colors.colorScheme.onBackground
+                            Text(
+                                modifier = Modifier
+                                    .statusBarsPadding()
+                                    .padding(vertical = Size16),
+                                text = stringResource(Res.string.artworks)
                             )
+                            IconButton(
+                                modifier = Modifier
+                                    .statusBarsPadding()
+                                    .padding(vertical = Size16),
+                                onClick = {
+                                    isSearchActive = true
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    tint = Colors.colorScheme.onBackground
+                                )
+                            }
                         }
+                    } else {
+                        SearchBar(
+                            query = state.searchQuery,
+                            onQueryChange = { onAction(ArtListViewModel.Action.Search(it)) },
+                            onClearClick = {
+                                onAction(ArtListViewModel.Action.ClearSearch)
+                                isSearchActive = false
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .padding(vertical = Size16, end = Size16)
+                        )
                     }
-                }
-                AnimatedVisibility(
-                    visible = isSearchActive,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    SearchBar(
-                        query = state.searchQuery,
-                        onQueryChange = { onAction(ArtListViewModel.Action.Search(it)) },
-                        onClearClick = {
-                            onAction(ArtListViewModel.Action.ClearSearch)
-                            isSearchActive = false
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .statusBarsPadding()
-                            .padding(vertical = Size16, end = Size16)
-                    )
                 }
             },
             scrollBehavior = scrollBehavior,
@@ -168,7 +169,7 @@ private fun ArtListContent(
             if (state.isSearching) {
                 when (val result = state.searchResult) {
                     is SearchResult.Idle -> {
-                        // Idle state - show nothing or search prompt
+                        // Idle state
                     }
 
                     is SearchResult.Loading -> {
@@ -271,7 +272,7 @@ fun SearchList(
         }
 
         if (isLoadingNextPage) {
-            item {
+            item(key = "search_loading") {
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(Size16),
                     contentAlignment = Alignment.Center
@@ -314,7 +315,6 @@ fun ArtworkList(
 
     LaunchedEffect(reachedBottom) {
         if (reachedBottom && artworks.isNotEmpty()) {
-
             onEndOfListReached()
         }
     }
@@ -368,10 +368,10 @@ fun SearchBar(
         value = query,
         onValueChange = onQueryChange,
         modifier = modifier,
-        placeholder = { Text("Search Artworks...") },
+        placeholder = { Text(stringResource(Res.string.search_artworks)) },
         trailingIcon = {
             IconButton(onClick = onClearClick) {
-                Icon(Icons.Default.Close, contentDescription = "Clear search")
+                Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.clear_search))
             }
         },
         singleLine = true,
@@ -410,7 +410,7 @@ private fun ErrorView(message: String, onRetry: () -> Unit) {
         Text(text = message, color = MaterialTheme.colorScheme.error)
         Spacer(modifier = Modifier.height(Size16))
         Button(onClick = onRetry) {
-            Text("Retry")
+            Text(stringResource(Res.string.retry))
         }
     }
 }
