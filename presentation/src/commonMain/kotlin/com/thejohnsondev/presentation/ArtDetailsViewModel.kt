@@ -85,6 +85,9 @@ class ArtDetailsViewModel(
         val isOnView: Boolean,
         val galleryTitle: String? = null
     )
+    enum class FactType {
+        Medium, Dimensions, Style, Place
+    }
 
     data class State(
         val screenState: ScreenState = ScreenState.None,
@@ -105,13 +108,13 @@ class ArtDetailsViewModel(
                 null
             }
 
-        val facts: List<Fact>
+        val facts: List<Pair<FactType, String>>
             get() = artwork?.let { art ->
                 listOfNotNull(
-                    Fact("Medium", art.medium),
-                    Fact("Dimensions", art.dimensions),
-                    art.style?.let { Fact("Style", it) },
-                    Fact("Place", art.placeOfOrigin)
+                    FactType.Medium to art.medium,
+                    FactType.Dimensions to art.dimensions,
+                    art.style?.let { FactType.Style to it },
+                    FactType.Place to art.placeOfOrigin
                 )
             } ?: emptyList()
     }
